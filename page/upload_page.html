@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MNW</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="../../vendors/feather/feather.css">
+    <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.css" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="../../vendors/select2/select2.min.css">
+    <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="../../vendors/js/vendor.bundle.base.js"></script>
+    <link rel="shortcut icon" href="../../images/logo/m-favicon.png" />
+     <style>
+        #loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0%   { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <!-- <div id="navbarPlaceholder"></div> -->
+        <div id="navbar-container"></div>
+        
+
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_settings-panel.html -->
+            <!-- <div id="topbar"></div> -->
+            <div id="sidbar-container"></div>
+
+
+            <!-- partial -->
+            <!-- <div id="menubar"></div> -->
+            
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <!-- <form> -->
+                                    <h3 class="text-primary">Upload Tracker Files</h3>
+                                    <hr>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-6">
+                                            <label for="">Project Name</label>
+                                            <select name="projectname" class="form-control" id="projectname" required>
+                                                <option value="">--Select Project--</option>
+                                            </select>
+                                            <!-- <div class="valid-feedback">Valid.</div>
+                                                <div class="invalid-feedback">Please fill out this field.</div> -->
+                                        </div>
+                                        <div class="col-sm-12 col-md-6">
+                                            <label for="">Cycle Name</label>
+                                            <select name="cyclename" class="form-control" id="cyclename" required>
+                                                <option value="">--Select Cycle--</option>
+                                            </select>
+                                            <!-- <div class="valid-feedback">Valid.</div>
+                                                <div class="invalid-feedback">Please fill out this field.</div> -->
+                                            <br>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-4">
+                                            <label for="trackerfile">Tracker File</label>
+                                            <input type="file" class="form-control" accept=".csv" name="trackerfile"
+                                                id="trackerfile">
+                                            
+                                        </div>
+                                        <div class="col-sm-12 col-md-4">
+                                            <label for="planogram_pdf">Planogram PDF</label>
+                                            <input type="file" class="form-control" accept=".zip" name="planogram_pdf"
+                                                id="planogram_pdf">
+                                            <label class="form-label text-muted" for="planogram_format_name">All Files Under folder (Planogram PDF)</label>
+                                        </div>
+                                        <div class="col-sm-12 col-md-4">
+                                            <label for="planogram_image">Source File</label>
+                                            <input type="file" class="form-control" accept=".zip" name="planogram_image"
+                                                id="planogram_image">
+                                            <label class="form-label text-muted" for="store_number_format_name">All Files Under folder (Snaphub)</label>
+                                        </div>
+                                    </div>
+
+                                    <br>
+                                    <div class="row">
+                                        <!-- <div class="col-md-9">
+                                            <button class="btn btn-info mt-2" id="downloadBtn">Download tracker
+                                                file template</button>
+                                        </div> -->
+                                        <div class="col-md-9">
+                                            <button class="btn btn-info mt-2" id="pdfshownbtn">Csv File Template</button>
+                                        </div>
+                                        <div class="d-flex justify-content-end col-md-3">
+                                            <button class="btn btn-primary btn-sm"
+                                                onclick="trackerdatas()" id="submitbtn">Submit</button>
+                                            <br>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <br>
+
+                                    <!-- <div class="row">
+                                        <div class="col-md-9"></div>
+                                        <div class="col-md-1">
+                                            <button style="text-align: right;" class="btn btn-primary btn-sm"
+                                                onclick="trackerdatas()" id="submitbtn">Submit</button>
+                                            <br>
+                                        </div>
+                                    </div> -->
+                                    <div class="row">
+                                        <div class="col-md-11">
+                                            <p>Uploading</p>
+                                            <div class="progress mt-3" style="display: none;">
+                                                <div class="progress-bar progress-bar-striped bg-success"
+                                                    role="progressbar" style="width: 0%;" aria-valuenow="0"
+                                                    aria-valuemin="0" aria-valuemax="100">
+                                                    0%
+                                                </div>
+                                                <br>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <p style="color: rgb(255, 7, 7);" class="mt-2" id="show_percentage_value">
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-11">
+                                            <p>Writing</p>
+                                            <div class="progress mt-3" style="display: none;">
+                                                
+                                                <div class="progress-bar1 progress-bar-striped bg-success"
+                                                    role="progressbar" style="width: 0%;" aria-valuenow="0"
+                                                    aria-valuemin="0" aria-valuemax="100">
+                                                    0%
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <p style="color: rgb(255, 7, 7);" class="mt-2" id="show_percentage_value1">
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <!-- </form> -->
+                                </div>
+                                <br><br>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br>
+                    <div id="loader" class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered"
+                                            style="table-layout: auto; width: 100%; text-align: center;" id="my_table1">
+                                            <thead style="text-align: center;">
+                                                <tr>
+                                                    <th>S.No</th>
+                                                    <th>Projet Name</th>
+                                                    <th>Cycle</th>
+
+                                                    <th class="text-info">Tracker record Count</th>
+                                                    <th>Tracker File Uploaded by</th>
+                                                    <th>Upload Date</th>
+
+                                                    <th class="text-primary">Planogram Count</th>
+                                                    <th>Planogram File Uploaded by</th>
+                                                    <th>Upload Date</th>
+
+                                                    <th class="text-warning">Source File Count</th>
+                                                    <th>Source File Uploaded by</th>
+                                                    <th>Upload Date</th>
+                                                    <th class="text-danger">Delete</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="trackertable">
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <br>
+                </div>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+
+    <style>
+        select[name="my_table1_length"] {
+            height: 30px;
+        }
+
+        .paginate_button {
+            font-size: 12px;
+        }
+    </style>
+    <!-- container-scroller -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Include Select2 CSS & JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+    <script src="../../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+    <script src="../../vendors/datatables.net/jquery.dataTables.js"></script>
+    <script src="../../js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+
+    <!-- <script src="../../vendors/select2/select2.min.js"></script> -->
+    <!-- <script src="../../js/off-canvas.js"></script> -->
+    <script src="../../js/hoverable-collapse.js"></script>
+    <script src="../../js/settings.js"></script>
+    <script src="../../js/todolist.js"></script>
+    <script src="../../js/select2.js"></script>
+</body>
+<script src="../../js/url.js"></script>
+<script src="../../js/auth-setup.js"></script>
+<script>
+    $(document).ready(function () {
+        loadNavbar();
+        loadsidbar();
+    });
+</script>
+<script>
+    
+
+    // $(document).ready(function () {
+    //     var url = baseurl + '/get_project';
+    //     $.ajax({
+    //         url: url,
+    //         type: 'GET',
+    //         contentType: 'application/json',
+
+    //         success: function (response) {
+    //             console.log('Request successful');
+    //             console.log('Response:', response);
+    //             $.each(response, function (index, item) {
+    //                 var select = "";
+    //                 select += '<option value="' + item.project_id + '">' + item.project_name + '</option>';
+    //                 $('#projectname').append(select);
+    //                 $('#table_projectname').append(select);
+
+    //             });
+    //         },
+    //         error: function (xhr, status, error) {
+    //             console.error('Error:', error);
+    //         }
+    //     });
+    // });
+    $(document).ready(function () {
+        var url = baseurl + '/get_project';
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+
+            success: function (response) {
+                // Empty and add new options
+                $('#projectname').empty().append('<option value="">--Select Project--</option>');
+                $.each(response, function (index, item) {
+                    $('#projectname').append('<option value="' + item.project_id + '">' + item.project_name + '</option>');
+                });
+
+                // Activate Select2 (makes dropdown searchable)
+                $('#projectname').select2({
+                    placeholder: "Select Option",
+                    allowClear: true
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#projectname').change(function () {
+            var projectId = $(this).val();
+            populateCycleData(projectId);
+        });
+
+        function populateCycleData(projectId) {
+            var formData = new FormData();
+            formData.append('project_id', projectId);
+
+            var url = baseurl + '/get_cycle';
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+
+                success: function (response) {
+                    console.log(response);
+                    $('#cyclename').empty(); // Clear existing options
+                    $('#cyclename').append('<option value="">--Select Cycle--</option>');
+                    $.each(response, function (index, item) {
+                        $('#cyclename').append('<option value="' + item.cycle_id + '">' + item.cycle_name + '</option>');
+                    });
+                    $('#cyclename').select2({
+                        placeholder: "Select Option",
+                        allowClear: true
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+    });
+</script>
+
+<script>
+    function trackerdatas() {
+        $('.progress').show();
+
+        let fileType;
+        const files = {
+            trackerFile: $('#trackerfile')[0].files[0],
+            planogramPDF: $('#planogram_pdf')[0].files[0],
+            planogramImage: $('#planogram_image')[0].files[0]
+        };
+
+        temp1 = Object.values(files).filter(value => value !== undefined).length;
+
+        for (fileType in files) {
+            if (files[fileType]) {
+                switch (fileType) {
+                    case 'trackerFile':
+                        sendFile(files.trackerFile, '/tracking_sheet_upload');
+                        break;
+                    case 'planogramPDF':
+                        sendFile(files.planogramPDF, '/planogram_upload');
+                        break;
+                    case 'planogramImage':
+                        sendFile(files.planogramImage, '/store_image_upload');
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    count = 0;
+    function sendFile(file, url) {
+
+        var projectid = $('#projectname').val();
+        var cycleid = $('#cyclename').val();
+        var urls = baseurl + url;
+        if (projectid != "" && cycleid != "") {
+            if (file) {
+                var formData = new FormData();
+                formData.append('project_id', projectid);
+                formData.append('cycle_id', cycleid);
+                formData.append('uploaded_by', parseInt(1));
+                formData.append('file', file);
+
+                $.ajax({
+                    url: urls,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                    xhr: function () {
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener('progress', function (evt) {
+                            if (evt.lengthComputable) {
+                                var percentComplete = evt.loaded / evt.total * 100;
+                                $('.progress-bar').css('width', percentComplete + '%');
+                                $('.progress-bar').text('');
+                                $('#show_percentage_value').text(percentComplete.toFixed(0) + '%');
+                            }else{
+                                console.log("Hi Length No Countable")
+                            }
+                        }, false);
+                        return xhr;
+                    },
+                    success: function (response) {
+                        console.log('Success:', response);
+                        count++;
+                        if (count == temp1) {
+                            location.reload();
+
+                        }
+
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+
+                // Use dynamic session_id for progress tracking
+                const session_id = projectid + '_' + cycleid;
+                const eventSource = new EventSource(baseurl + '/progress/' + session_id);
+                eventSource.onmessage = function(event) {
+                    const progress = parseFloat(event.data);
+                    console.log(progress)
+                    $('.progress-bar1').css('width', progress + '%');
+                    $('.progress-bar1').text('');
+                    $('#show_percentage_value1').text(progress.toFixed(0) + '%');
+                };
+            }
+        } else {
+            swal.fire({
+                title: 'Error',
+                text: 'Please fill in both Project Name and Cycle Name.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
+
+    $(document).ready(function () {
+        $('#submitbtn').click(function () {
+            var projectid = $('#projectname').val();
+            var cycleid = $('#cyclename').val();
+
+            if (projectid === "" || cycleid === "") {
+                swal.fire({
+                    title: 'Error',
+                    text: 'Please fill in both Project Name and Cycle Name.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                var file = $('#fileInput')[0].files[0]; // Assuming there's an input with id="fileInput" for file selection
+                var url = baseurl + url;// Replace with your actual URL
+                sendFile(file, url);
+            }
+        });
+    });
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        var url = baseurl + '/get_all_project';
+        var autoIncrementId = 1;
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+                $('#trackertable').empty()
+                $.each(response, function (index, item) {
+                    var rows = '';
+                    rows += '<tr>';
+                    rows += '<td>' + autoIncrementId++ + '</td>';
+                    rows += '<td>' + item['project_name'] + '</td>';
+                    rows += '<td>' + item['cycle_name'] + '</td>';
+                    rows += '<td>' + item['tracking_sheet_count'] + '</td>';
+                    rows += '<td>' + item['t_name'] + '</td>';
+                    rows += '<td>' + item['t_created_at'] + '</td>';
+                    rows += '<td>' + item['str_plano_count'] + '</td>';
+                    rows += '<td>' + item['p_name'] + '</td>';
+                    rows += '<td>' + item['p_created_at'] + '</td>';
+                    rows += '<td>' + item['str_img_count'] + '</td>';
+                    rows += '<td>' + item['i_name'] + '</td>';
+                    rows += '<td>' + item['i_created_at'] + '</td>';
+                    rows += '<td><img src="../../images/delete.png" style="border-radius: 0; width: 20px; height: 20px;" onclick="data(\'delete\',' + item["project_id"] + ',' + item["cycle_id"] + ')"></td>';
+                    rows += '</tr>';
+                    $('#trackertable').append(rows);
+                });
+                $(document).ready(function () {
+                    $('#my_table1').dataTable({
+                        "pageLength": 10
+
+                    });
+                });
+
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    })
+
+
+    function data(key, project_id, cycle_id) {
+        if (key === "delete") {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You won\'t be able to revert this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById("loader").style.display = "inline-block";
+                    var url = baseurl + `/delete_project_cycle?project_id=${project_id}&cycle_id=${cycle_id}`;
+                    var formData = new FormData();
+                    formData.append('project_id', parseInt(project_id));
+                    formData.append('cycle_id', parseInt(cycle_id));
+
+                    fetch(url, {
+                        method: 'DELETE',
+                        body: formData,
+                        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.status === "success") {
+                            document.getElementById("loader").style.display = "none";
+                            Swal.fire('Deleted!', data.message, 'success')
+                                .then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    }
+                                });
+                        } else {
+                            document.getElementById("loader").style.display = "none";
+                            Swal.fire('Error!', 'Failed to delete data', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        document.getElementById("loader").style.display = "none";
+                    });
+                }
+            });
+        }
+    }
+
+
+
+</script>
+
+<!-- <script>
+    $(document).ready(function () {
+        // Function to generate and download CSV
+        function downloadCSV() {
+
+            var csvData = "Store Number,4 - Digit Store Number,Store Name,Department Name,Planogram Type,Planogram Name,No. of SKUs,Priroity,Delivery_date";
+            var blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+            var link = document.createElement("a");
+            link.setAttribute("href", URL.createObjectURL(blob));
+            link.setAttribute("download", "data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        $("#downloadBtn").click(function () {
+            downloadCSV();
+        });
+    });
+</script> -->
+
+
+<script>
+    $(document).ready(function () {
+        // Function to generate and download CSV
+        function downloadCSV() {
+
+            var csvData = "Store Number,4 - Digit Store Number,Store Name,Department Name,Planogram Type,Planogram Name, Width (Cm), No. of SKUs,Priroity,Delivery_date, Missing_Skus Without OOS, Incorrectly_Placed_Skus, Missing_Price_Card, Planogram_Status, POG_Image_Status, Review_Status, Remarks, Compliant/Non-Compliant, No. Of Bays In Pdf,No. Of Bays Per Images, Width Of POG In Pdf, Width Of Bays Per Image, No. Of Shelves In Pdf Eg. (4+4+4),No. Of Shelves Per Image Eg. (4+4+4),Total Shelves In Pdf,Total Shelves Per Image,Shelf/Segment Size Discrepency (Yes/No),Recheck_Missing_Skus_Score,Recheck_Incorrectly_Placed_Skus_Score,Recheck_Missing_Price_Card_Score,Recheck_Planogram_Status,Recheck_POG_Image_Status,Re_Check_Review_Status,Recheck_Remarks,Missing_Skus Without OOS,Incorrectly_Placed_Skus,Missing_Price_Card,Planogram_Status,POG_Image_Status,Review_Status,No Of Error,Error Description,Compliant/ Non-Compliant,No. Of Bays In Pdf,No. Of Bays Per Images,Width Of POG In Pdf,Width Of Bays Per Image,No. Of Shelves In Pdf Eg. (4+4+4),No. Of Shelves Per Image Eg. (4+4+4),Total Shelves In Pdf,Total Shelves Per Image,Shelf/Segment Size Discrepency (Yes/No),No Of Error,Error Description,Recheck_Missing_Skus_Score,Recheck_Incorrectly_Placed_Skus_Score,Recheck_Missing_Price_Card_Score,Recheck_Planogram_Status,Recheck_POG_Image_Status,Re_Check_Review_Status,Recheck_Remarks,Recheck_Completed_Date,Recheck_Allocation,No Of Error,Error Description";
+            var blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+            var link = document.createElement("a");
+            link.setAttribute("href", URL.createObjectURL(blob));
+            link.setAttribute("download", "data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        $("#pdfshownbtn").click(function () {
+            downloadCSV();
+        });
+    });
+</script>
+
+<!-- <script>
+    function trackerdatas() {
+        var trackerFile = $('#trackerfile')[0].files[0];
+        var planogramPDF = $('#planogram_pdf')[0].files[0];
+        var planogramImage = $('#planogram_image')[0].files[0];
+
+        var promises = [];
+
+        if (trackerFile) {
+            promises.push(sendFile(trackerFile, '/tracking_sheet_upload'));
+        }
+        if (planogramPDF) {
+            promises.push(sendFile(planogramPDF, '/planogram_upload'));
+        }
+        if (planogramImage) {
+            promises.push(sendFile(planogramImage, '/tracking_sheet_upload'));
+        }
+
+        Promise.all(promises)
+        .then(function() {
+            console.log("All files uploaded successfully.");
+            location.reload();
+        })
+        .catch(function(error) {
+            console.error("Error:", error);
+        });
+    }
+
+    function sendFile(file, url) {
+        return new Promise(function(resolve, reject) {
+            var projectid = $('#projectname').val();
+            var cycleid = $('#cyclename').val();
+            var urls = baseurl + url;
+
+            if (file) {
+                var formData = new FormData();
+                formData.append('project_id', projectid);
+                formData.append('cycle_id', cycleid);
+                formData.append('uploaded_by', parseInt(1));
+                formData.append('file', file);
+
+                $.ajax({
+                    url: urls,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function (response) {
+                        console.log('Success:', response);
+                        resolve(response);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                        reject(error);
+                    }
+                });
+            }
+        });
+    }
+</script> -->
+    <script src="../../js/template.js"></script>
+
+</html>

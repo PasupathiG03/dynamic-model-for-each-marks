@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
+
+
+    <!-- <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script> -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+
+    <style>
+        .container {
+            display: flex;
+        }
+
+        .container p {
+            margin-right: 20px;
+            /* Adjust as needed for spacing between elements */
+            font-size: 150px;
+        }
+
+        #pdf-viewer {
+            width: 50%;
+            height: 100px;
+            /* overflow: hidden; */
+            border: 1px solid #ccc;
+            position: relative;
+            display: inline-block;
+        }
+
+        .annotation-marker1 {
+            position: absolute;
+            width: 30px;
+            height: 70px;
+            border-bottom: 12px solid #4B49AC;
+            /* Bottom line for the tick */
+            border-right: 12px solid #4B49AC;
+            /* Right slanted line for the tick */
+            transform: rotate(45deg);
+            /* Rotate to create the tick shape */
+            cursor: pointer;
+        }
+
+        .annotation-marker2 {
+            position: absolute;
+            background-color: blue;
+            width: 100px;
+            height: 15px;
+            /* Adjust as needed */
+            transform: rotate(45deg);
+            /* Rotate to create a tick mark */
+            cursor: pointer;
+            padding-right: 7px;
+        }
+
+        .annotation-marker2::after {
+            content: "";
+            position: absolute;
+            width: 100px;
+            height: 15px;
+            background-color: blue;
+            transform: rotate(-90deg);
+            padding-right: 7px;
+        }
+
+        .annotation-marker3 {
+            position: absolute;
+            background-color: red;
+            width: 100px;
+            height: 15px;
+            /* Adjust as needed */
+            transform: rotate(45deg);
+            /* Rotate to create a tick mark */
+            cursor: pointer;
+            padding-right: 7px;
+        }
+
+        .annotation-marker3::after {
+            content: "";
+            position: absolute;
+            width: 100px;
+            height: 15px;
+            background-color: red;
+            transform: rotate(-90deg);
+            padding-right: 7px;
+        }
+
+        .annotation-marker4 {
+            position: absolute;
+            background-color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .buttondiv {
+            margin-left: 40px;
+            margin-top: 50px;
+        }
+
+        .image-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 20px;
+            margin-bottom: 0;
+        }
+
+        .image-wrapper img {
+            width: 400px;
+            height: 400px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .image-wrapper:hover img {
+            transform: scale(2);
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .image-caption {
+            display: none;
+        }
+
+        .image-wrapper:hover .image-caption {
+            display: block;
+        }
+
+        #image-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        body {
+            overflow: auto !important;
+        }
+
+        .page-wrapper {
+            position: relative;
+        }
+
+        .annotation-marker1,
+        .annotation-marker2,
+        .annotation-marker3 {
+            position: absolute;
+        }
+
+        #dynamic-button-container,
+        #dynamic-counter-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+    </style>
+
+    <!-- <script>
+        $(document).ready(function () {
+            const availablity_check = window.location.search;
+            const availablity_checks = new URLSearchParams(availablity_check);
+            const availablity_checking = availablity_checks.get('available_checking_text');
+            $('#available_checking_text').text(availablity_checking);
+        });
+    </script> -->
+
+    <script>
+        let availableAnnotations = [];
+        const annotations = [
+            { id: 'green-tick', label: 'Tick', color: 'Green', shape: 'Tick', markerClass: 'marker-green-tick' },
+            { id: 'red-cross', label: 'RedCross', color: 'Red', shape: 'Cross', markerClass: 'marker-red-cross' },
+            // { id: 'blue-cross', label: 'BlueCross', color: 'Blue', shape: 'Cross', markerClass: 'marker-blue-cross' },
+            // { id: 'yellow-tick', label: 'YellowTick', color: 'Yellow', shape: 'Tick', markerClass: 'marker-yellow-tick' },
+            // { id: 'pink-cross', label: 'PinkCross', color: 'Pink', shape: 'Cross', markerClass: 'marker-pink-cross' },
+            // { id: 'violet-tick', label: 'VioletTick', color: 'Violet', shape: 'Tick', markerClass: 'marker-violet-tick' }
+            ];
+        let selectedAnnotation = null;
+
+        $(document).ready(function () {
+            $(document.body).on('keydown', function (event) {
+                if (document.activeElement.id === 'upcInput') {
+                    return;
+                }
+
+                const key = event.key.toUpperCase();
+
+                const matchingAnnotations = availableAnnotations.filter(
+                    anno => anno.label && anno.label.trim().charAt(0).toUpperCase() === key
+                );
+
+                let targetAnnotation = null;
+
+                if (matchingAnnotations.length === 1) {
+                    targetAnnotation = matchingAnnotations[0];
+                } else if (matchingAnnotations.length > 1) {
+                    matchingAnnotations.sort((a, b) => a.label.length - b.label.length);
+                    targetAnnotation = matchingAnnotations[0];
+                }
+                if (targetAnnotation) {
+                    $(`#btn-${targetAnnotation.id}`).click();
+                }
+            });
+
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const annotationsString = urlParams.get('annotations');
+
+            if (!annotationsString) {
+                console.error('Annotation data not found in URL.');
+                return;
+            }
+
+            try {
+                const annotationDataFromUrl = JSON.parse(decodeURIComponent(annotationsString));
+
+                for (let i = 0; i < annotationDataFromUrl.annotate_color_name.length; i++) {
+                    const label = annotationDataFromUrl.annotate_label_name[i];
+                    const color = annotationDataFromUrl.annotate_color_name[i];
+                    const shape = annotationDataFromUrl.annotate_shape_name[i];
+                    const uniqueId = `${color.toLowerCase()}-${shape.toLowerCase()}`;
+
+                    availableAnnotations.push({
+                        id: uniqueId,
+                        label: label,
+                        color: color,
+                        shape: shape,
+                        markerClass: `marker-${uniqueId}`
+                    });
+                }
+                console.log("Processed Annotations:", availableAnnotations);
+
+                const buttonContainer = $('#dynamic-button-container');
+                const counterContainer = $('#dynamic-counter-container');
+
+                buttonContainer.empty();
+                counterContainer.empty();
+
+                availableAnnotations.forEach(anno => {
+                    const button = $(`<button>${anno.label}</button>`);
+
+                    button.attr('id', `btn-${anno.id}`);
+                    button.css({
+                        'background-color': anno.color,
+                        'color': 'white',
+                        'padding': '20px 40px',
+                        'font-size': '52px',
+                        'border-radius': '28px',
+                        'border': '3px solid #333',
+                        'margin': '20px'
+                    });
+
+                    button.on('click', function () {
+                        selectAnnotation(anno);
+                    });
+                    buttonContainer.append(button);
+
+                    const counterWrapper = $('<div style="display: flex; align-items: center; margin-right: 40px;"></div>');
+                    const counterLabel = $(`<p style="color:${anno.color}; font-size: 80px; font-weight: bold; margin: 0 15px 0 0;">${anno.label}:</p>`);
+                    const counterValue = $(`<p id="count-${anno.id}" style="color:${anno.color}; font-size: 80px; font-weight: bold; margin: 0;">0</p>`);
+
+                    counterWrapper.append(counterLabel);
+                    counterWrapper.append(counterValue);
+                    counterContainer.append(counterWrapper);
+
+                    createMarkerStyle(anno.markerClass, anno.color, anno.shape);
+                });
+
+            } catch (e) {
+                console.error("Failed to parse or process annotation data:", e);
+            }
+        });
+
+        function createMarkerStyle(className, color, shape) {
+            let style = '';
+            const baseStyle = `position: absolute; cursor: pointer;`;
+
+            if (shape.toLowerCase() === 'tick') {
+                style = `.${className} { ${baseStyle} width: 30px; height: 70px; border-bottom: 12px solid ${color}; border-right: 12px solid ${color}; transform: rotate(45deg); }`;
+            } else if (shape.toLowerCase() === 'cross') {
+                style = `.${className} { ${baseStyle} width: 60px; height: 16px; background-color: ${color}; transform: rotate(45deg); } .${className}::after { content: ""; position: absolute; width: 60px; height: 16px; background-color: ${color}; transform: rotate(-90deg); }`;
+            }
+            $('<style>').prop('type', 'text/css').html(style).appendTo('head');
+        }
+
+        function selectAnnotation(annotation) {
+            selectedAnnotation = annotation;
+            $('button[id^="btn-"]').css('outline', 'none');
+            $(`#btn-${annotation.id}`).css('outline', '5px solid black');
+            console.log("Selected:", selectedAnnotation);
+        }
+    </script>
+
+
+
+</head>
+
+<body>
+    <div class="modal" id="myModal"></div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="buttondiv">
+
+                <div id="dynamic-button-container"></div>
+
+                <!-- (Rest of the HTML is unchanged) -->
+                <button type="button" id="asd786" class="btn btn-primary" data-toggle="modal"
+                    data-target="#exampleModal" style="display: none;" onclick="upcdata()">
+                    UPC
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document" style="background-color: blueviolet;">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background-color: burlywood;">
+                                <p class="modal-title" id="exampleModalLabel" style="font-size: 60px;">Search UPC
+                                <p>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true" style="font-size: 80px;">&times;</span>
+                                    </button>
+                            </div>
+                            <div class="modal-body">
+                                <label for="upcInput">Enter UPC Code</label>
+                                <input type="text" class="form-control" id="upcInput"
+                                    style="height: 150px; font-size: 100px;" onkeyup="searchUPC()">
+                                <br>
+                                <div id="searchResult"></div>
+
+                                <button type="button" class="btn btn-success" id="addinputButton"
+                                    style="height:150px; width:600px; font-size:80px; border-radius:40px;">
+                                    Add Manually
+                                </button>
+                                
+                                <div id="modalBodyContent"></div>
+
+                                <br>
+
+                                <table id="productTable" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>UPC</th>
+                                            <th>Product ID</th>
+                                            <th>Product Name</th>
+                                            <th>UPC Selection</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                    style="height: 150px ;width: 250px; font-size: 80px; border-radius: 40px;">Close</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    // When Add button is clicked, replace modal content
+                    document.addEventListener('DOMContentLoaded', function () {
+                        document.getElementById('addinputButton').addEventListener('click', function () {
+
+                            const modalBody = document.getElementById('modalBodyContent');
+                            modalBody.innerHTML = `
+                                <br>
+                                <label for="upcCode">UPC</label>
+                                <input type="text" class="form-control" id="upcCode"
+                                    style="height: 150px; font-size: 100px;">
+                                <br>
+
+                                <label for="productId">Product ID</label>
+                                <input type="text" class="form-control" id="productId"
+                                    style="height: 150px; font-size: 100px;">
+                                <br>
+
+                                <label for="productName">Product Name</label>
+                                <input type="text" class="form-control" id="productName"
+                                    style="height: 150px; font-size: 100px;">
+                                <br>
+
+                                <input type="hidden" id="status" value="Manual" class="form-control"
+                                    style="height: 150px; font-size: 100px;">
+                                <br>
+
+                                <button type="button" class="btn btn-success" id="addButton"
+                                    style="height:150px; width:250px; font-size:80px; border-radius:40px;" onclick="addbutton()">
+                                    Add
+                                </button>
+
+                                <button type="button" class="btn btn-danger" id="removeButton"
+                                    style="height:150px; width:300px; font-size:80px; border-radius:40px;" onclick="removebutton()">
+                                    Cancel
+                                </button>
+                                <br><br>
+                            `;
+                        });
+                    });
+
+                    
+                </script>
+
+                <script>
+                    $(function () {
+                        var isDragging = false;
+                        var initialMouseX, initialMouseY;
+                        var modal = $(".modal-dialog");
+
+                        $(".modal-header").on("mousedown", function (e) {
+                            isDragging = true;
+                            initialMouseX = e.clientX - modal.offset().left;
+                            initialMouseY = e.clientY - modal.offset().top;
+
+                            $(document).on("mousemove", onMouseMove);
+                            $(document).on("mouseup", onMouseUp);
+
+                            e.preventDefault();
+                        });
+
+                        function onMouseMove(e) {
+                            if (isDragging) {
+                                var newX = e.clientX - initialMouseX;
+                                var newY = e.clientY - initialMouseY;
+
+                                modal.css({
+                                    left: newX + 'px',
+                                    top: newY + 'px',
+                                    transform: 'none'
+                                });
+                            }
+                        }
+
+                        function onMouseUp() {
+                            if (isDragging) {
+                                $(document).off("mousemove", onMouseMove);
+                                $(document).off("mouseup", onMouseUp);
+                                isDragging = false;
+                            }
+                        }
+                    });
+                </script>
+
+                <!-- <script>
+
+
+                    selectedItems = [];
+                    const upcInput = document.getElementById('upcInput');
+                    const searchResult = document.getElementById('searchResult');
+
+                     // ✅ When clicking ADD manually (from input boxes)
+                    function addbutton() {
+                        const upc = document.getElementById('upcCode').value.trim();
+                        const productId = document.getElementById('productId').value.trim();
+                        const productName = document.getElementById('productName').value.trim();
+                        const tickValue = document.getElementById('status').value;
+
+
+                        if (!upc || !productId || !productName) {
+                            alert('Please fill in all fields before adding.');
+                            return;
+                        }
+
+                        const item = {
+                            "UPC": upc,
+                            "Product ID": productId,
+                            "Product Name": productName,
+                            "Manually Added" : tickValue
+                        };
+
+                        selectedItems.push(item);
+                        reloadTable();
+
+                        // Clear inputs
+                        document.getElementById('upcCode').value = '';
+                        document.getElementById('productId').value = '';
+                        document.getElementById('productName').value = '';
+
+                        // Clear the entire modal body
+                        document.getElementById('modalBodyContent').innerHTML = '';
+
+                    }
+
+                    function removebutton() {
+                        
+                        // Clear the entire modal body
+                        document.getElementById('modalBodyContent').innerHTML = '';
+
+                    }
+
+                    function searchUPC() {
+                        const enteredUPC = upcInput.value.toUpperCase();
+
+                        // const matchingItems = upcData.filter(item => new RegExp(enteredUPC, "i").test(item["Product Name"]));
+                        // const matchingItems = upcData.filter(item => new RegExp(enteredUPC, "i").test(item["Product Name"]));
+                        // const matchingItems = upcData.filter(item =>
+                        //     new RegExp(enteredUPC, "i").test(item["Product Name"]) ||
+                        //     new RegExp(enteredUPC, "i").test(item["UPC"]) ||
+                        //     new RegExp(enteredUPC, "i").test(item["Product ID"]) 
+
+                        // );
+                        const matchingItems = upcData
+                            .filter(item =>
+                                new RegExp(enteredUPC, "i").test(item["Product Name"]) ||
+                                new RegExp(enteredUPC, "i").test(item["UPC"]) ||
+                                new RegExp(enteredUPC, "i").test(item["Product ID"])
+                            )
+                            .map(item => ({
+                                ...item,
+                                tick: "Dropdown" // Add tick value manually
+                            }));
+
+                        if (enteredUPC.length > 0) {
+                            if (matchingItems.length > 0) {
+                                let resultsHTML = '<div class="row">';
+                                matchingItems.forEach(item => {
+                                    resultsHTML += `
+                                    <div id="highlightDiv" class="col-md-12 add-button" data-item='${JSON.stringify(item)}'>
+                                        ${item.UPC} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                         ${item["Product ID"]}    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    
+
+                                         ${item["Product Name"]}    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    
+                                        
+                                        <hr>
+                                    </div>
+                                `;
+                                });
+                                // <button class="btn btn-primary add-button" data-item='${JSON.stringify(item)}' style="font-size: 64px;">Add</button>
+                                resultsHTML += '</div>';
+                                searchResult.innerHTML = resultsHTML;
+                                const addButtons = document.querySelectorAll('.add-button');
+                                addButtons.forEach(button => {
+                                    button.addEventListener('click', function () {
+                                        searchResult.innerHTML = '';
+                                        $('#upcInput').val('')
+                                    });
+                                });
+                            }
+
+                            else {
+                                searchResult.innerHTML = 'No matching UPC codes found.';
+                            }
+
+                            const addButtons = document.querySelectorAll('.add-button');
+                            addButtons.forEach(button => {
+                                button.addEventListener('click', function () {
+                                    const selectedItem = JSON.parse(this.dataset.item);
+                                    selectedItems.push(selectedItem);
+                                    console.log("Selected Items:", selectedItems);
+                                    reloadTable();
+                                });
+                            });
+                        } else {
+                            searchResult.innerHTML = 'No matching UPC codes found.';
+                        }
+                        
+
+                    }
+                    function generateTable(items) {
+                        const tableBody = document.getElementById('tableBody');
+                        items.forEach((item, index) => {
+                            const row = document.createElement('tr');
+                            Object.values(item).forEach(value => {
+                                const cell = document.createElement('td');
+                                cell.textContent = value;
+                                row.appendChild(cell);
+                            });
+                            // const deleteCell = document.createElement('td');
+                            // const deleteBtn = document.createElement('button');
+                            // deleteBtn.textContent = 'Delete';
+                            // deleteBtn.classList.add('btn', 'btn-danger');
+                            // deleteBtn.style.fontSize = '70px';
+                            // deleteBtn.addEventListener('click', () => removeItem(index));
+                            // deleteCell.appendChild(deleteBtn);
+                            // row.appendChild(deleteCell);
+
+                            // tableBody.appendChild(row);
+
+                            const deleteCell = document.createElement('td');
+                            deleteCell.style.textAlign = 'center';
+                            deleteCell.style.verticalAlign = 'middle';
+                            const deleteIcon = document.createElement('img');
+                            deleteIcon.src = '../../images/delete.png';
+                            deleteIcon.style.borderRadius = '0';
+                            deleteIcon.style.width = '80px';
+                            deleteIcon.style.height = '80px';
+                            deleteIcon.style.cursor = 'pointer';
+                            deleteIcon.addEventListener('click', () => removeItem(index));
+                            deleteCell.appendChild(deleteIcon);
+                            row.appendChild(deleteCell);
+
+                            tableBody.appendChild(row);
+
+                        });
+                    }
+                    function removeItem(index) {
+                        selectedItems.splice(index, 1);
+                        reloadTable();
+                    }
+
+                    function reloadTable() {
+                        const tableBody = document.getElementById('tableBody');
+                        tableBody.innerHTML = '';
+                        generateTable(selectedItems);
+                    }
+                </script> -->
+
+                <script>
+                    let upcByButton = {};   // Global button-wise storage
+
+                    let selectedItems = [];  // Single global array for all added/search-selected items
+
+                    const upcInput = document.getElementById('upcInput');
+                    const searchResult = document.getElementById('searchResult');
+
+                    // ✅ When clicking ADD manually (from input boxes)
+                    function addbutton() {
+                        const upc = document.getElementById('upcCode').value.trim();
+                        const productId = document.getElementById('productId').value.trim();
+                        const productName = document.getElementById('productName').value.trim();
+                        const tickValue = document.getElementById('status').value;
+
+
+                        if (!upc || !productId || !productName) {
+                            alert('Please fill in all fields before adding.');
+                            return;
+                        }
+
+                        const item = {
+                            "UPC": upc,
+                            "Product ID": productId,
+                            "Product Name": productName,
+                            "Manually Added" : tickValue
+                        };
+
+                        // selectedItems.push(item);
+                        if (!selectedAnnotation) {
+                            alert("Select annotation button first!");
+                            return;
+                        }
+
+                        let key = selectedAnnotation.id;        // example: "red-cross"
+
+                        // if button key not present, create array
+                        if (!upcByButton[key]) {
+                            upcByButton[key] = [];
+                        }
+
+                        // push item into correct button array
+                        upcByButton[key].push(item);
+
+                        // update table only for that button
+                        loadTableForButton(key);
+
+                        reloadTable();
+
+                        // Clear inputs
+                        document.getElementById('upcCode').value = '';
+                        document.getElementById('productId').value = '';
+                        document.getElementById('productName').value = '';
+
+                        // Clear the entire modal body
+                        document.getElementById('modalBodyContent').innerHTML = '';
+
+                    }
+
+                    function removebutton() {
+                        
+                        // Clear the entire modal body
+                        document.getElementById('modalBodyContent').innerHTML = '';
+
+                    }
+
+
+                    // ✅ Search Function
+                    function searchUPC() {
+                        const enteredUPC = upcInput.value.toUpperCase();
+
+                        // const matchingItems = upcData.filter(item =>
+                        //     new RegExp(enteredUPC, "i").test(item["Product Name"]) ||
+                        //     new RegExp(enteredUPC, "i").test(item["UPC"]) ||
+                        //     new RegExp(enteredUPC, "i").test(item["Product ID"])
+                        // );
+
+
+                        const matchingItems = upcData
+                            .filter(item =>
+                                new RegExp(enteredUPC, "i").test(item["Product Name"]) ||
+                                new RegExp(enteredUPC, "i").test(item["UPC"]) ||
+                                new RegExp(enteredUPC, "i").test(item["Product ID"])
+                            )
+                            .map(item => ({
+                                ...item,
+                                tick: "Dropdown" // Add tick value manually
+                            }));
+
+                        if (enteredUPC.length > 0) {
+                            if (matchingItems.length > 0) {
+                                let resultsHTML = '<div class="row">';
+                                matchingItems.forEach(item => {
+                                    resultsHTML += `
+                                        <div class="col-md-12 add-button" data-item='${JSON.stringify(item)}'>
+                                            ${item.UPC} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            ${item["Product ID"]} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            ${item["Product Name"]} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                                            <hr>
+                                        </div>
+                                    `;
+                                });
+                                resultsHTML += '</div>';
+                                searchResult.innerHTML = resultsHTML;
+
+                                const addButtons = document.querySelectorAll('.add-button');
+                                addButtons.forEach(button => {
+                                    button.addEventListener('click', function () {
+                                        const selectedItem = JSON.parse(this.dataset.item);
+                                        // selectedItems.push(selectedItem);
+                                        // reloadTable();
+                                        let key = selectedAnnotation.id;
+
+                                        if (!upcByButton[key]) {
+                                            upcByButton[key] = [];
+                                        }
+
+                                        upcByButton[key].push(selectedItem);
+                                        loadTableForButton(key);
+
+                                        searchResult.innerHTML = '';
+                                        $('#upcInput').val('');
+                                    });
+                                });
+
+                            } else {
+                                searchResult.innerHTML = 'No matching UPC codes found.';
+                            }
+                        } else {
+                            searchResult.innerHTML = '';
+                        }
+                    }
+
+                    function loadTableForButton(key) {
+                        let list = upcByButton[key] || [];
+                        const tableBody = document.getElementById('tableBody');
+                        tableBody.innerHTML = '';
+
+                        list.forEach((item, index) => {
+                            const row = document.createElement('tr');
+
+                            Object.values(item).forEach(value => {
+                                const cell = document.createElement('td');
+                                cell.textContent = value;
+                                row.appendChild(cell);
+                            });
+
+                            const deleteCell = document.createElement('td');
+                            const deleteIcon = document.createElement('img');
+                            deleteIcon.src = '../../images/delete.png';
+                            deleteIcon.style.width = '80px';
+                            deleteIcon.style.height = '80px';
+                            deleteIcon.style.cursor = 'pointer';
+
+                            deleteIcon.addEventListener('click', () => {
+                                upcByButton[key].splice(index, 1);
+                                loadTableForButton(key);
+                            });
+
+                            deleteCell.appendChild(deleteIcon);
+                            row.appendChild(deleteCell);
+
+                            tableBody.appendChild(row);
+                        });
+                    }
+
+                    // ✅ Table Helper Functions (Outside searchUPC)
+                    function generateTable(items) {
+                        const tableBody = document.getElementById('tableBody');
+                        tableBody.innerHTML = '';
+
+                        items.forEach((item, index) => {
+                            const row = document.createElement('tr');
+
+                            Object.values(item).forEach(value => {
+                                const cell = document.createElement('td');
+                                cell.textContent = value;
+                                row.appendChild(cell);
+                            });
+
+                            // Delete Icon
+                            const deleteCell = document.createElement('td');
+                            deleteCell.style.textAlign = 'center';
+                            deleteCell.style.verticalAlign = 'middle';
+                            const deleteIcon = document.createElement('img');
+                            deleteIcon.src = '../../images/delete.png';
+                            deleteIcon.style.width = '80px';
+                            deleteIcon.style.height = '80px';
+                            deleteIcon.style.cursor = 'pointer';
+                            deleteIcon.addEventListener('click', () => removeItem(index));
+                            deleteCell.appendChild(deleteIcon);
+                            row.appendChild(deleteCell);
+
+                            tableBody.appendChild(row);
+                        });
+                    }
+
+                    function removeItem(index) {
+                        selectedItems.splice(index, 1);
+                        reloadTable();
+                    }
+
+                    function reloadTable() {
+                        generateTable(selectedItems);
+                    }
+                </script>
+
+                <style>
+                    body.modal-open {
+                        overflow: hidden;
+                    }
+
+                    .modal-dialog {
+                        width: 2500px;
+                        max-width: 4000px !important;
+                        min-height: 1000px !important;
+                        margin: 1.75rem auto;
+                        position: absolute;
+                    }
+
+                    .modal-body {
+                        font-size: 50px;
+                        max-height: none;
+                        height: 1000px;
+                        overflow-y: auto;
+                        padding-top: 50px !important;
+                        padding-bottom: 50px !important;
+                        padding-left: 50px !important;
+                        padding-right: 50px !important;
+                    }
+
+                    .modal-header {
+                        cursor: move;
+                    }
+
+                    #highlightDiv {
+                        cursor: pointer;
+                    }
+
+                    #highlightDiv:hover {
+                        background-color: yellow;
+                        color: blue;
+                    }
+                </style>
+
+                <script src="../../js/url.js"></script>
+
+
+
+            </div>
+        </div>
+        <!-- <div class="col-md-2 text-end">
+            <h5 id="available_checking_text" class="mt-5" style="color:red; font-size: 60px;"></h5>
+        </div> -->
+        <div class="col-md-8 mt-4">
+            <div id="image-container" class="mt-4"></div>
+        </div>
+        <div class="col-md-1 mt-5">
+            <button class="btn btn-primary" style="font-size: 60px; border-radius: 40px;"
+                id="submit_colors_tick_count">Submit</button>
+        </div>
+    </div>
+
+    <p id="val" style="visibility: hidden;"></p>
+    <br><br>
+
+    <div id="dynamic-counter-container" class="container"></div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="pdf-viewer" style="height: 100px;width: 100px;"></div>
+
+            <div id="pdfContainer" style="height: 100px;width: 100px;"></div>
+            <script>
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                const qValue = urlParams.get('q');
+                let newurl = qValue;
+                let modifiedUrl = newurl.replace('upload_pdf', 'pdf');
+                const urlmax = new URL(modifiedUrl);
+                var axisPoints = [];
+                var count = 1;
+                var one = "";
+                var two = "";
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+                const url = urlmax;
+                const pdfContainer = document.getElementById('pdf-viewer');
+                pdfjsLib.getDocument(url).promise.then(pdfDoc => {
+                    for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+                        const pageWrapper = document.createElement('div');
+                        pageWrapper.className = 'page-wrapper';
+                        pageWrapper.dataset.pageNumber = pageNum;
+                        pageWrapper.style.position = 'relative';
+                        pageWrapper.style.display = 'inline-block';
+
+                        const canvas = document.createElement('canvas');
+                        canvas.id = `myCanvas${pageNum}`;
+
+                        pageWrapper.appendChild(canvas);
+                        pdfContainer.appendChild(pageWrapper);
+
+                        renderPage(pageNum, pdfDoc, canvas);
+                    }
+
+                });
+
+
+                function renderPage(num, pdfDoc, canvas) {
+                    pdfDoc.getPage(num).then(page => {
+                        let scale = 1;
+                        let resolution = 5;
+                        let viewport = page.getViewport({ scale });
+                        let context = canvas.getContext('2d');
+
+                        canvas.height = resolution * viewport.height;
+                        canvas.width = resolution * viewport.width;
+                        canvas.style.height = viewport.height;
+                        canvas.style.width = viewport.width;
+
+                        let renderContext = {
+                            canvasContext: context,
+                            viewport: viewport,
+                            transform: [resolution, 0, 0, resolution, 0, 0]
+                        };
+
+
+                        page.render(renderContext).promise.then(() => {
+                            canvas.addEventListener('click', function (e) {
+                                handleCanvasClick(e, canvas, num);
+                            });
+                        });
+
+                    });
+                }
+
+
+                function handleCanvasClick(event, canvas, pageNum) {
+                    if (!selectedAnnotation) {
+                        alert("Please select an annotation type first!");
+                        return;
+                    }
+
+                    let rect = canvas.getBoundingClientRect();
+                    let scaleX = canvas.width / rect.width;
+                    let scaleY = canvas.height / rect.height;
+                    let x = (event.clientX - rect.left) * scaleX;
+                    let y = (event.clientY - rect.top) * scaleY;
+
+                    let marker = document.createElement('div');
+                    marker.className = selectedAnnotation.markerClass;
+
+                    if (selectedAnnotation.shape.toLowerCase() === 'cross') {
+                        x -= 30;
+                        y -= 7;
+                    } else if (selectedAnnotation.shape.toLowerCase() === 'tick') {
+                        x -= 16;
+                        y -= 30;
+                    }
+
+                    marker.style.left = `${x}px`;
+                    marker.style.top = `${y}px`;
+
+                    const pageWrapper = canvas.parentNode;
+                    pageWrapper.appendChild(marker);
+
+                    const counterElement = $(`#count-${selectedAnnotation.id}`);
+                    let currentCount = parseInt(counterElement.text());
+                    counterElement.text(currentCount + 1);
+                    // Assuming annotations is an array and selectedAnnotation is an object
+                    const foundAnnotation = annotations.find(annotation => 
+                        annotation.shape.toLowerCase() === selectedAnnotation.shape.toLowerCase() &&
+                        annotation.color.toLowerCase() === selectedAnnotation.color.toLowerCase()
+                    );
+
+                    if (foundAnnotation) {
+                        $('#asd786').click();
+                        loadTableForButton(selectedAnnotation.id);
+                    }
+                    // if (selectedAnnotation.shape.toLowerCase() === 'cross' && selectedAnnotation.color.toLowerCase() === 'red') {
+                    //     $('#asd786').click();
+                    // }
+
+                    axisPoints.push({
+                        x: x.toString(),
+                        y: y.toString(),
+                        ht_width: canvas.width,
+                        ht_height: canvas.height,
+                        label: selectedAnnotation.id,
+                        aid: count.toString(),
+                        page: pageNum
+                    });
+                    console.log(axisPoints);
+
+                    marker.id = count;
+
+
+                    $(marker).data('annotationId', selectedAnnotation.id);
+
+                    marker.onclick = function () {
+                        axisPoints = axisPoints.filter(obj => obj.aid !== marker.id);
+                        console.log("Updated axisPoints:", axisPoints);
+
+                        const annotationId = $(this).data('annotationId');
+                        const counterToDecrement = $(`#count-${annotationId}`);
+                        let countToDecrement = parseInt(counterToDecrement.text());
+                        counterToDecrement.text(countToDecrement - 1);
+
+                        this.parentNode.removeChild(this);
+                    };
+
+                    count++;
+                }
+
+
+
+                function selectAnnotationMarker(markerType) {
+                    document.getElementById('val').innerText = markerType;
+                }
+
+                function fun(a) {
+                    if (a == "1") {
+                        document.getElementById('val').innerHTML = 'annotation-marker1';
+                    } else if (a == "2") {
+                        document.getElementById('val').innerHTML = 'annotation-marker2';
+                        if (document.getElementById('val').innerHTML === 'annotation-marker2') {
+
+                        }
+                    } else if (a == "3") {
+                        document.getElementById('val').innerHTML = 'annotation-marker3';
+                    }
+                }
+
+
+                function downloadPDF() {
+                    const axisPoints1 = axisPoints;
+
+                    let iframeLoaded = false;
+
+                    const formData = new FormData();
+                    formData.append('axis_points', JSON.stringify(axisPoints));
+                    var currentURL = window.location.href;
+
+                    var hostname = new URL(currentURL).hostname;
+                    console.log(hostname)
+                    window.location.href = window.location.origin + '/pages/page/recheck_production.html';
+                    fetch(window.location.origin + '/get_axis', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.blob();
+                        })
+                        .then(blob => {
+                            const url = URL.createObjectURL(blob);
+                            if (!iframeLoaded) {
+                                const iframe = document.createElement('iframe');
+                                iframe.width = '100%';
+                                iframe.height = '2500px';
+                                document.getElementById('pdfContainer').appendChild(iframe);
+                                iframeLoaded = true;
+                            }
+                            document.getElementById('pdfContainer').firstChild.src = url;
+                        })
+                        .catch(error => console.error('Error fetching PDF:', error));
+                }
+
+                // $(document).ready(function () {
+                //     $('#submit_colors_tick_count').click(function () {
+                //         let allCounts = [];
+                //         let totalCrossCount = 0;
+
+                //         availableAnnotations.forEach(anno => {
+                //             const countId = `#count-${anno.id}`;
+                //             const count = parseInt($(countId).text()) || 0;
+                //             allCounts.push({
+                //                 label: anno.label,
+                //                 count: count,
+                //                 color: anno.color,
+                //                 shape: anno.shape
+                //             });
+                //              if (anno.label.toLowerCase() === 'redcross') {
+                //                 totalCrossCount += count;
+                //             }
+                //         });
+
+                //         console.log("All gathered counts:", allCounts);
+                //         console.log("Total 'Cross' count for validation:", totalCrossCount);
+
+                //         var tableData = [];
+                //         $('#productTable tbody tr').each(function () {
+                //             var rowData = {};
+                //             rowData.product_upc = $(this).find('td:nth-child(1)').text().trim();
+                //             rowData.product_id = $(this).find('td:nth-child(2)').text().trim();
+
+                //             rowData.product_name = $(this).find('td:nth-child(3)').text().trim();
+                //             rowData.UPC_Selection = $(this).find('td:nth-child(4)').text().trim();
+                //             rowData.product_distrubtor = "";
+                //             tableData.push(rowData);
+                //         });
+
+                //         if (totalCrossCount !== tableData.length) {
+                //             alert("Value doesn't match. The total count of all 'Cross' annotations (" + totalCrossCount + ") must equal the number of UPCs you entered (" + tableData.length + "). Please review your counts.");
+                //             return;
+                //         }
+
+                //         const url = window.location.href;
+                //         const queryString = url.split('?')[1];
+                //         const params = queryString.split('&');
+                //         let pdfUrl = '';
+                //         params.forEach(param => {
+                //             if (param.includes('upload_pdf')) {
+                //                 pdfUrl = param.split('=')[1];
+                //             }
+                //         });
+                //         const decodedPdfUrl = decodeURIComponent(pdfUrl);
+                //         const desiredPath = decodedPdfUrl.replace(/^https?:\/\/[^\/]+\/?/, '');
+                //         const urlParams = new URLSearchParams(window.location.search);
+
+                //         var formDataAxis = new FormData();
+                //         formDataAxis.append('input_path', desiredPath);
+                //         formDataAxis.append('axis_points', JSON.stringify(axisPoints));
+                //         formDataAxis.append('production_id', urlParams.get('production_id'));
+                //         formDataAxis.append('process', 'recheck');
+
+                //         var urlsAxis = baseurl + '/pdf_post_axis';
+                //         $.ajax({
+                //             url: urlsAxis,
+                //             type: 'POST',
+                //             processData: false,
+                //             contentType: false,
+                //             data: formDataAxis,
+                //             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                //             success: function (response) {
+                //                 var formDataUpc = new FormData();
+                //                 formDataUpc.append('production_id', urlParams.get('production_id'));
+                //                 formDataUpc.append('upc_json', JSON.stringify(tableData));
+                //                 formDataUpc.append('process', 'recheck');
+
+                //                 var urlsUpc = baseurl + '/add_upc';
+                //                 $.ajax({
+                //                     url: urlsUpc,
+                //                     type: 'POST',
+                //                     processData: false,
+                //                     contentType: false,
+                //                     data: formDataUpc,
+                //                     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                //                     success: function (response) {
+                //                         var formDataCounts = new FormData();
+                //                         formDataCounts.append('production_id', urlParams.get('production_id'));
+                //                         let apiCounts = {};
+                //                         allCounts.forEach(item => { apiCounts[item.label] = item.count; });
+                //                         formDataCounts.append('counts', JSON.stringify(apiCounts));
+                //                         formDataCounts.append('process', 'recheck');
+
+                //                         var urlsCounts = baseurl + '/add_count';
+                //                         $.ajax({
+                //                             url: urlsCounts,
+                //                             type: 'POST',
+                //                             processData: false,
+                //                             contentType: false,
+                //                             data: formDataCounts,
+                //                             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                //                             success: function (response) {
+                //                                 var prokey = urlParams.get('production_id');
+                //                                 var newTab = window.open(window.location.origin + '/pages/page/recheck_production.html?&desiredPath=' + desiredPath + '&production_id=' + prokey + '&tableData=' + encodeURIComponent(JSON.stringify(tableData)) + '&status=production&allCounts=' + encodeURIComponent(JSON.stringify(allCounts)), '_blank');
+                //                                 newTab.onload = function () { window.close(); };
+                //                             },
+                //                             error: function (xhr, status, error) { console.error('Error adding counts:', error); }
+                //                         });
+                //                     },
+                //                     error: function (xhr, status, error) { console.error('Error adding UPCs:', error); }
+                //                 });
+                //             },
+                //             error: function (xhr, status, error) { console.error('Error posting axis points:', error); }
+                //         });
+                //     });
+                // });
+                $(document).ready(function () {
+                    $('#submit_colors_tick_count').click(function () {
+
+                        let allCounts = [];
+                        let totalCrossCount = 0;
+
+                        availableAnnotations.forEach(anno => {
+                            const countId = `#count-${anno.id}`;
+                            const count = parseInt($(countId).text()) || 0;
+
+                            allCounts.push({
+                                label: anno.label,
+                                count: count,
+                                color: anno.color,
+                                shape: anno.shape
+                            });
+
+                            if (anno.label.toLowerCase() === 'redcross') {
+                                totalCrossCount += count;
+                            }
+                        });
+
+                        console.log("Counts:", allCounts);
+                        console.log("UPC Button-wise:", upcByButton);
+
+                        // // Validate: totalCrossCount must equal total UPC entered
+                        // const totalUPCs = Object.values(upcByButton).flat().length;
+
+                        // if (totalCrossCount !== totalUPCs) {
+                        //     alert(
+                        //         "Cross count (" + totalCrossCount +
+                        //         ") must match total UPCs (" + totalUPCs + ")"
+                        //     );
+                        //     return;
+                        // }
+                        // ---- BUTTON-WISE VALIDATION ----
+                        for (const anno of availableAnnotations) {
+
+                            // Check if the current annotation button exists inside `annotations` list
+                            const existsInAnnotationList = annotations.some(a =>
+                                a.label.toLowerCase() === anno.label.toLowerCase()
+                            );
+
+                            // If this button is NOT part of original `annotations`, skip it
+                            if (!existsInAnnotationList) {
+                                console.log(`Skipping ${anno.label} because it's not in annotations list.`);
+                                continue;
+                            }
+
+                            const key = anno.id;   // example: red-cross, green-tick
+                            
+                            const annotationCount = parseInt($(`#count-${key}`).text()) || 0;
+                            const upcCount = (upcByButton[key] ? upcByButton[key].length : 0);
+
+                            if (annotationCount !== upcCount) {
+                                alert(
+                                    `Count mismatch for "${anno.label}".\n` +
+                                    `Annotation Count: ${annotationCount}\n` +
+                                    `UPC Count: ${upcCount}`
+                                );
+                                return;
+                            }
+                        }
+
+
+                        // ---- Extract PDF path ----
+                        const url = window.location.href;
+                        const queryString = url.split('?')[1];
+                        const params = queryString.split('&');
+
+                        let pdfUrl = '';
+
+                        params.forEach(param => {
+                            if (param.includes('upload_pdf')) {
+                                pdfUrl = param.split('=')[1];
+                            }
+                        });
+
+                        const decodedPdfUrl = decodeURIComponent(pdfUrl);
+                        const desiredPath = decodedPdfUrl.replace(/^https?:\/\/[^\/]+\/?/, '');
+                        const urlParams = new URLSearchParams(window.location.search);
+
+                        // ---- POST AXIS POINTS ----
+                        var formDataAxis = new FormData();
+                        formDataAxis.append('input_path', desiredPath);
+                        formDataAxis.append('axis_points', JSON.stringify(axisPoints));
+                        formDataAxis.append('production_id', urlParams.get('production_id'));
+                        formDataAxis.append('process', 'production');
+
+                        $.ajax({
+                            url: baseurl + '/pdf_post_axis',
+                            type: 'POST',
+                            processData: false,
+                            contentType: false,
+                            data: formDataAxis,
+                            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+
+                            success: function () {
+
+                                // ---- POST UPC BUTTON-WISE ----
+                                var formDataUpc = new FormData();
+                                formDataUpc.append('production_id', urlParams.get('production_id'));
+                                formDataUpc.append('upc_json', JSON.stringify(upcByButton));   // IMPORTANT
+                                formDataUpc.append('process', 'production');
+
+                                $.ajax({
+                                    url: baseurl + '/add_upc',
+                                    type: 'POST',
+                                    processData: false,
+                                    contentType: false,
+                                    data: formDataUpc,
+                                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+
+                                    success: function () {
+
+                                        // ---- POST COUNT ----
+                                        var formDataCounts = new FormData();
+                                        formDataCounts.append('production_id', urlParams.get('production_id'));
+
+                                        let apiCounts = {};
+                                        allCounts.forEach(item => { apiCounts[item.label] = item.count; });
+
+                                        formDataCounts.append('counts', JSON.stringify(apiCounts));
+                                        formDataCounts.append('process', 'production');
+
+                                        $.ajax({
+                                            url: baseurl + '/add_count',
+                                            type: 'POST',
+                                            processData: false,
+                                            contentType: false,
+                                            data: formDataCounts,
+                                            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+
+                                            success: function () {
+
+                                                var prokey = urlParams.get('production_id');
+
+                                                // OPEN NEXT PAGE
+                                                var newTab = window.open(
+                                                    window.location.origin +
+                                                    '/pages/page/production_page.html?&desiredPath=' + desiredPath +
+                                                    '&production_id=' + prokey +
+                                                    '&upcData=' + encodeURIComponent(JSON.stringify(upcByButton)) +
+                                                    '&allCounts=' + encodeURIComponent(JSON.stringify(allCounts)),
+                                                    '_blank'
+                                                );
+
+                                                newTab.onload = function () { window.close(); };
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    });
+                });
+            </script>
+
+            <script src="../../js/url.js"></script>
+            <script>
+                upcData = [];
+                function upcdata() {
+
+                    const url = window.location.href;
+                    const queryString = url.split('?')[1];
+                    const params = queryString.split('&');
+
+                    let pdfUrl = '';
+                    params.forEach(param => {
+                        if (param.includes('upload_pdf')) {
+                            pdfUrl = param.split('=')[1];
+                        }
+                    });
+                    const decodedPdfUrl = decodeURIComponent(pdfUrl);
+                    const desiredPath = decodedPdfUrl.replace(/^https?:\/\/[^\/]+\/?/, '');
+                    console.log(desiredPath + "bharath");
+                    var formData = new FormData();
+                    formData.append('pdf_path', desiredPath);
+                    var urls = baseurl + '/get_upc_text'
+                    $.ajax({
+                        url: urls,
+                        type: 'POST',
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                        success: function (response) {
+                            console.log(response);
+                            upcData = response;
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error:', error);
+                        }
+                    });
+                }
+            </script>
+
+            <script>
+                const urlParamss = new URLSearchParams(window.location.search);
+                const ImageValue = urlParamss.get('image');
+                const imageContainer = document.getElementById('image-container');
+                const duplicatesString = urlParamss.get('duplicates');
+                const duplicateData = duplicatesString ? JSON.parse(decodeURIComponent(duplicatesString)) : [];
+                const duplicateFileNames = new Set();
+                if (duplicateData.length > 0) {
+                    const actualDuplicateGroups = duplicateData.filter(group => Array.isArray(group) && group.length > 1);
+                    const allDuplicatePaths = actualDuplicateGroups.flat();
+                    allDuplicatePaths.forEach(fullPath => {
+                        if (typeof fullPath === 'string') {
+                            const fileName = fullPath.split('/').pop();
+                            duplicateFileNames.add(fileName);
+                        }
+                    });
+                }
+                function safePath(path) {
+                    return encodeURIComponent(path.replace(/\\/g, '/'));
+                }
+                if (ImageValue && ImageValue != "") {
+                    const imagePaths = ImageValue.split(',');
+                    if (imagePaths.length > 0) {
+                        const decodedImagePaths = imagePaths.map(path => decodeURIComponent(path.trim()));
+                        decodedImagePaths.forEach(path => {
+                            const img = document.createElement('img');
+                            var temp = baseurl + "/" + path;
+                            re_url_image = temp.replace("upload_image", "image");
+                            temp = baseurl + "/" + safePath(re_url_image.replace(baseurl + "/", ""))
+                            img.src = temp;
+                            img.onclick = function () {
+                                window.open(temp, '_blank');
+                            };
+                            const wrapper = document.createElement('div');
+                            wrapper.classList.add('image-wrapper');
+                            const imageName = path.split('/').pop();
+                            let formattedName = imageName;
+                            if (imageName.includes('.')) {
+                                const parts = imageName.split('.');
+                                if (parts.length > 1) {
+                                    formattedName = parts;
+                                }
+                            }
+                            wrapper.title = formattedName;
+                            const caption = document.createElement('p');
+                            caption.textContent = imageName;
+                            caption.classList.add('image-caption');
+                            caption.style.textAlign = 'center';
+                            if (duplicateFileNames.has(imageName)) {
+                                caption.style.color = 'red';
+                                caption.style.fontWeight = 'bold';
+                                wrapper.style.border = '5px solid red';
+                                wrapper.style.padding = '5px';
+                            }
+                            wrapper.appendChild(img);
+                            wrapper.appendChild(caption);
+                            imageContainer.appendChild(wrapper);
+                        });
+                    } else {
+                        const noImageMessage = document.createElement('p');
+                        noImageMessage.textContent = "No image found";
+                        imageContainer.appendChild(noImageMessage);
+                    }
+                } else {
+                    const noImageMessage = document.createElement('p');
+                    noImageMessage.textContent = "No image found";
+                    imageContainer.appendChild(noImageMessage);
+                    console.log('No image paths found in query parameters.');
+                }
+            </script>
+            <style>
+                .image-wrapper {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    margin-right: 20px;
+                    margin-bottom: 0;
+                }
+
+                .image-wrapper img {
+                    width: 400px;
+                    height: 400px;
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                }
+
+                .image-wrapper:hover img {
+                    transform: scale(2);
+                    z-index: 10;
+                    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+                }
+
+                .image-caption {
+                    display: none;
+                }
+
+                .image-wrapper:hover .image-caption {
+                    display: block;
+                }
+
+                #image-container {
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                }
+            </style>
+        </div>
+        <div class="col-md-6">
+
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#exampleModal').on('show.bs.modal', function () {
+                $('body').css('overflow', 'hidden');
+            });
+
+            $('#exampleModal').on('hidden.bs.modal', function () {
+                $('body').css('overflow', 'auto');
+            });
+        });
+    </script>
+    <script>
+        document.body.style.zoom = "25%";
+    </script>
+</body>
+
+</html>

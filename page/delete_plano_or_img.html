@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MNW</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="../../vendors/feather/feather.css">
+    <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.css" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="../../vendors/select2/select2.min.css">
+    <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="../../vendors/js/vendor.bundle.base.js"></script>
+    <link rel="shortcut icon" href="../../images/logo/m-favicon.png" />
+     <style>
+        #loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0%   { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <!-- <div id="navbarPlaceholder"></div> -->
+        <div id="navbar-container"></div>
+        
+
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_settings-panel.html -->
+            <!-- <div id="topbar"></div> -->
+            <div id="sidbar-container"></div>
+
+
+            <!-- partial -->
+            <!-- <div id="menubar"></div> -->
+            
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <!-- <form> -->
+                                    <h3 class="text-primary">Delete Plano or Image</h3>
+                                    <hr>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-3">
+                                            <label for="">Project Name</label>
+                                            <select name="projectname" class="form-control" id="projectname" required>
+                                                <option value="">--Select Project--</option>
+                                            </select>
+                                            <!-- <div class="valid-feedback">Valid.</div>
+                                                <div class="invalid-feedback">Please fill out this field.</div> -->
+                                        </div>
+                                        <div class="col-sm-12 col-md-3">
+                                            <label for="">Cycle Name</label>
+                                            <select name="cyclename" class="form-control" id="cyclename" required>
+                                                <option value="">--Select Cycle--</option>
+                                            </select>
+                                            <!-- <div class="valid-feedback">Valid.</div>
+                                                <div class="invalid-feedback">Please fill out this field.</div> -->
+                                            <br>
+                                        </div>
+                                        <div class="col-sm-12 col-md-3">
+                                            <label for="">Select Type</label>
+                                            <select name="uploadtype" class="form-control" id="uploadtype" required>
+                                                <option value="">--Select Type--</option>
+                                                <option value="planogram">Planogram</option>
+                                                <option value="image">Image</option>                                              
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-12 col-md-3">
+                                            <label for="">Date & Time</label>
+                                            <select name="createdat" class="form-control" id="createdat" required>
+                                                <option value="">--Select Date & Time--</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="d-flex justify-content-end col-md-12 mt-2">
+                                            <button class="btn btn-primary btn-sm" id="submitbtn">Submit</button>
+                                            <br>
+                                        </div>
+                                    </div>
+                                    
+                                    <hr>
+                                    <div class="row">
+                                        <div class="d-flex justify-content-end col-md-6 mt-3">
+                                            <button class="btn btn-danger btn-sm ms-2 d-none" id="deletebtn">Delete Data</button>
+                                        </div>
+                                    </div>
+                                    <br>
+
+                              
+                                </div>
+                                <br><br>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br>
+                    <div id="loader" class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                   
+                    <br>
+                </div>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+
+    <style>
+        select[name="my_table1_length"] {
+            height: 30px;
+        }
+
+        .paginate_button {
+            font-size: 12px;
+        }
+    </style>
+    <!-- container-scroller -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Include Select2 CSS & JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+    <script src="../../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+    <script src="../../vendors/datatables.net/jquery.dataTables.js"></script>
+    <script src="../../js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+
+    <!-- <script src="../../vendors/select2/select2.min.js"></script> -->
+    <!-- <script src="../../js/off-canvas.js"></script> -->
+    <script src="../../js/hoverable-collapse.js"></script>
+    <script src="../../js/template.js"></script>
+    <script src="../../js/settings.js"></script>
+    <script src="../../js/todolist.js"></script>
+    <script src="../../js/select2.js"></script>
+</body>
+    <script src="../../js/url.js"></script>
+    <script src="../../js/auth-setup.js"></script>
+    <script>
+
+
+    $(document).ready(function () {
+
+   
+
+        loadNavbar();
+        loadsidbar();
+
+       
+
+    });
+
+    $(document).ready(function () {
+        var url = baseurl + '/get_project';
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                // Empty and add new options
+                $('#projectname').empty().append('<option value="">--Select Project--</option>');
+                $.each(response, function (index, item) {
+                    $('#projectname').append('<option value="' + item.project_id + '">' + item.project_name + '</option>');
+                });
+
+                // Activate Select2 (makes dropdown searchable)
+                $('#projectname').select2({
+                    placeholder: "Select Option",
+                    allowClear: true
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#projectname').change(function () {
+            var projectId = $(this).val();
+            populateCycleData(projectId);
+        });
+
+        function populateCycleData(projectId) {
+            var formData = new FormData();
+            formData.append('project_id', projectId);
+
+            var url = baseurl + '/get_cycle';
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                success: function (response) {
+                    console.log(response);
+                    $('#cyclename').empty(); // Clear existing options
+                    $('#cyclename').append('<option value="">--Select Cycle--</option>');
+                    $.each(response, function (index, item) {
+                        $('#cyclename').append('<option value="' + item.cycle_id + '">' + item.cycle_name + '</option>');
+                    });
+                    $('#cyclename').select2({
+                        placeholder: "Select Option",
+                        allowClear: true
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+        
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const projectSelect = document.getElementById("projectname");
+        const cycleSelect   = document.getElementById("cyclename");
+        const typeSelect    = document.getElementById("uploadtype");
+        const createdSelect = document.getElementById("createdat");
+        const deleteBtn     = document.getElementById("deletebtn");
+        const loader        = document.getElementById("loader");
+
+        // 🔹 Populate cycles when project changes
+        projectSelect.addEventListener("change", async () => {
+            const projectId = projectSelect.value;
+            if (!projectId) return;
+
+            const url = baseurl + "/get_cycle";
+            loader.style.display = "inline-block";
+
+            try {
+                const res = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ project_id: projectId })
+                });
+                const data = await res.json();
+
+                cycleSelect.innerHTML = `<option value="">--Select Cycle--</option>`;
+                data.forEach(item => {
+                    cycleSelect.innerHTML += `<option value="${item.cycle_id}">${item.cycle_name}</option>`;
+                });
+            } catch (err) {
+                Swal.fire("Error", "Failed to fetch cycles", "error");
+            } finally {
+                loader.style.display = "none";
+            }
+        });
+
+        // 🔹 Populate created_at when cycle/type changes
+        async function fetchCreatedAt() {
+            const projectId = projectSelect.value;
+            const cycleId   = cycleSelect.value;
+            const uploadType = typeSelect.value;
+            if (!projectId || !cycleId || !uploadType) return;
+
+            const url = `${baseurl}/get_created_at_by_type?project_id=${projectId}&cycle_id=${cycleId}&upload_type=${uploadType}`;
+            loader.style.display = "inline-block";
+
+            try {
+                const res = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem('token')}`
+                    },
+
+                    body: JSON.stringify({ project_id: projectId, cycle_id: cycleId, upload_type: uploadType })
+                });
+                const data = await res.json();
+
+                createdSelect.innerHTML = `<option value="">--Select Date & Time--</option>`;
+                data.forEach(item => {
+                    createdSelect.innerHTML += `<option value="${item}">${item}</option>`;
+                });
+            } catch (err) {
+                Swal.fire("Error", "Failed to fetch created at list", "error");
+            } finally {
+                loader.style.display = "none";
+            }
+        }
+
+        cycleSelect.addEventListener("change", fetchCreatedAt);
+        typeSelect.addEventListener("change", fetchCreatedAt);
+
+        // 🔹 Enable delete button on submit
+        document.getElementById("submitbtn").addEventListener("click", e => {
+            e.preventDefault();
+            if (!projectSelect.value || !cycleSelect.value || !typeSelect.value || !createdSelect.value) {
+                Swal.fire("Error", "Please select all fields!", "error");
+                return;
+            }
+            deleteBtn.classList.remove("d-none");
+        });
+
+        // 🔹 Delete action
+        deleteBtn.addEventListener("click", async e => {
+            e.preventDefault();
+
+            const projectId = projectSelect.value;
+            const cycleId   = cycleSelect.value;
+            const uploadType = typeSelect.value;
+            const createdAt = createdSelect.value;
+
+            if (!projectId || !cycleId || !uploadType || !createdAt) {
+                Swal.fire("Error", "Please select all fields!", "error");
+                return;
+            }
+
+            const url = `${baseurl}/delete_plano_or_img?project_id=${projectId}&cycle_id=${cycleId}&created_at=${encodeURIComponent(createdAt)}&upload_type=${uploadType}`;
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "This will permanently delete records and files!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "Cancel"
+            }).then(async result => {
+                if (result.isConfirmed) {
+                    loader.style.display = "inline-block";
+                    try {
+                        const res = await fetch(url, {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": `Bearer ${localStorage.getItem('token')}`
+                            },
+
+
+                            body: JSON.stringify({ project_id: projectId, cycle_id: cycleId, upload_type: uploadType, created_at: createdAt })
+                        });
+                        const data = await res.json();
+
+                        // ✅ Only show success if the API returns success
+                        if (data.status === "success") {
+                            loader.style.display = "none";
+                            await Swal.fire("Deleted!", data.message, "success");
+                            location.reload();  // reload after user closes Swal
+                        } else {
+                            loader.style.display = "none";
+                            Swal.fire("Error", data.message || "Failed to delete data", "error");
+                        }
+
+                    } catch (err) {
+                        loader.style.display = "none";
+                        Swal.fire("Error", "Failed to delete data", "error");
+                    } finally {
+                        loader.style.display = "none";
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+    <script src="../../js/template.js"></script>
+
+
+</html>

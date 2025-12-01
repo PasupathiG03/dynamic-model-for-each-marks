@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MNW</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="../../vendors/feather/feather.css">
+    <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css">
+    <!-- <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css"> -->
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="../../vendors/select2/select2.min.css">
+    <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+    <!-- endinject -->
+    <link rel="shortcut icon" href="../../images/logo/m-favicon.png" />
+    
+</head>
+
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <!-- <div id="navbarPlaceholder"></div> -->
+        <div id="navbar-container"></div>
+
+        
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_settings-panel.html -->
+            <!-- <div id="topbar"></div> -->
+            <div id="sidbar-container"></div>
+
+            <!-- partial -->
+            <!-- <div id="menubar"></div> -->
+            
+            <!-- partial -->
+            <!-- partial:../../partials/_sidebar.html -->
+
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="text-primary">Assign Roles</h3>
+                            <hr><br>
+
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <label for="">Users</label><br>
+                                    <select name="anot_mark" id="anot_mark" class="js-example-basic-multiple w-100" multiple>
+                                        <option value="">--Select--</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="">Role</label>
+                                    <select name="demography" id="demography" class="form-control">
+                                        <option value="">--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Add spacing between inputs and button -->
+                            <div class="row mt-4">
+                                <div class="col-12 d-flex justify-content-end">
+                                    <button class="btn btn-primary btn-sm" onclick="projectinsertdata()">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+
+                       
+                    </div>
+                    <br>
+                    <div class="card">
+                        <div class="card-body">
+                            <script src="../../vendors/js/vendor.bundle.base.js"></script>
+                            <!-- <div class="table-responsive">
+                                <table class="table table-bordered"
+                                    style="table-layout: auto; width: 100%; text-align: center;" id="my_table1">
+                                    <thead>
+                                        <tr>
+                                            <th>S.no</th>
+                                            <th>Project name</th>
+                                            <th>Project demography</th>
+                                            <th>Project input type</th>
+                                            <th>Annotations</th>
+                                            <th>Add more Annotations</th>
+
+                                            <th class="text-info">Update Configrations </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="newtable">
+
+                                    </tbody>
+                                </table>
+                            </div> -->
+                            <style>
+                                select[name="my_table_length"] {
+                                    width: 20px;
+                                    display: inline-block;
+                                    height: 30px
+                                }
+
+                                #my_table1 {
+                                    font-size: 16px;
+                                }
+
+                                #my_table1 th {
+                                    font-size: 18px;
+                                    text-align: center;
+                                }
+
+                                #my_table1 td {
+                                    font-size: 15px;
+                                }
+                            </style>
+
+                        </div>
+                    </div>
+                    <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">User List</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead style="text-align: center;">
+                                                <tr>
+                                                    <td>S.No</td>
+                                                    <td>User Name</td>
+                                                    <td>Role</td>
+                                                    <td>Remove User</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="text-align: center;" id="newtableuser">
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Upload more users</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="text" style="display: none;" name="proidforuser" id="proidforuser">
+
+                                    <input type="file" class="form-control" name="upload_more_users"
+                                        id="upload_more_users">
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="upload_add_more_more_user()">Upload</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Annotations</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <td>S.No</td>
+                                                    <td>Annotation lable</td>
+                                                    <td>Annotation Shape</td>
+                                                    <td>Annotation Color</td>
+                                                    <td>Remove Annotation</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="text-align: center;" id="annotationtable">
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="exampleModal4" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Update Configrations</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+
+                                    <input type="text" style="display: none;" class="form-control" name="con_prod_id"
+                                        id="con_prod_id">
+                                    <label for="">Project Name</label>
+                                    <input type="text" class="form-control" name="updated_project_name"
+                                        id="updated_project_name">
+
+                                    <br>
+                                    <label for="">Demography</label>
+                                    <select name="updated_demography" id="updated_demography" class="form-control">
+                                        <option value="">--Select--</option>
+                                    </select>
+
+
+                                    <br>
+                                    <label for="">Input type</label>
+                                    <select name="updated_input_type" id="updated_input_type" class="form-control">
+                                        <option value="">--Select--</option>
+                                    </select>
+                                    <br>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="updated_configration_data()">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Add more Annotations</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="text" style="display: none;" name="proid" id="proid">
+                                    <label for="">Anotation Marker</label>
+                                    <br>
+                                    <select name="update_anot_mark" id="update_anot_mark" class="form-control" multiple>
+
+                                    </select>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="upload_add_more_annotations()">Upload</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            </div>
+        </div>
+    </div>
+    <style>
+        select[name="my_table1_length"] {
+            height: 30px;
+        }
+
+        .paginate_button {
+            font-size: 12px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+
+            font-size: .900rem !important;
+
+        }
+    </style>
+
+
+
+    <!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> -->
+
+
+    <script src="../../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+    <script src="../../vendors/datatables.net/jquery.dataTables.js"></script>
+    <script src="../../js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <!-- <script src="../../vendors/js/vendor.bundle.base.js"></script> -->
+    <script src="../../vendors/select2/select2.min.js"></script>
+    <!-- <script src="../../js/off-canvas.js"></script> -->
+    <script src="../../js/hoverable-collapse.js"></script>
+    <script src="../../js/settings.js"></script>
+    <script src="../../js/todolist.js"></script>
+    <script src="../../js/select2.js"></script>
+</body>
+<!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> -->
+<script src="../../js/url.js"></script>
+<script src="../../js/auth-setup.js"></script>
+
+<script>
+    $(document).ready(function () {
+    
+        loadNavbar();
+        loadsidbar();
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var url = baseurl + '/get_all_emp_ids';
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+                $.each(response.employees, function (index, item) {
+                    const displayText = `${item.emp_id} - ${item.emp_name}`;
+                    const option = `<option value="${item.emp_id}">${displayText}</option>`;
+                    $('#anot_mark').append(option);
+                });  
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+    $('#anot_mark').change(function () {
+        var selectedOption = $(this).val();
+        console.log('Selected item:', selectedOption);
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        var url = baseurl + '/get_all_emp_ids';
+        $.ajax({
+            url: url,
+            type: 'GET',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            contentType: 'application/json',
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+                $.each(response.emp_ids, function (index, item) {
+                    var option = $('<option></option>').attr('value', item).text(item);
+                    $('#update_anot_mark').append(option);
+
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var url = baseurl + '/get_user_Role';
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+                $.each(response, function (index, item) {
+                    var select = "";
+                    if (item.role_name=='Developer'){
+                        console.log('ok');
+                    } else {
+                        select += '<option value="' + item.role_id + '">' + item.role_name + '</option>';
+                        $('#demography').append(select);
+                    }
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var url = baseurl + '/get_user_Role';
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+                $.each(response, function (index, item) {
+                    var select = "";
+                    select += '<option value="' + item.role_id + '">' + item.role_name + '</option>';
+                    $('#updated_demography').append(select);
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var url = baseurl + '/get_dataSource_type';
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+                $.each(response, function (index, item) {
+                    var select = "";
+                    select += '<option value="' + item.datasource_id + '">' + item.datasource_type + '</option>';
+                    $('#updated_input_type').append(select);
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var url = baseurl + '/get_dataSource_type';
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+                $.each(response, function (index, item) {
+                    var select = "";
+                    select += '<option value="' + item.datasource_id + '">' + item.datasource_type + '</option>';
+                    $('#input_type').append(select);
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+<script>
+    function projectinsertdata() {
+        var anot_mark = $('#anot_mark').val(); // multiple user IDs selected
+        var demography = $('#demography').val(); // selected role ID
+
+        console.log(anot_mark, "emp_id");
+        console.log(demography, "role_id");
+
+        if (!anot_mark || !demography) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning',
+                text: 'Please fill all the fields!',
+            });
+            return;
+        }
+
+        // Prepare JSON data
+        var data = {
+            "user_id": anot_mark,    // array of emp IDs
+            "role_id": parseInt(demography)  // ensure role_id is a number
+        };
+
+        console.log(data);
+
+        // Send to backend
+        $.ajax({
+            url: baseurl + '/assign_user_roles',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Role assigned successfully!',
+                }).then(() => {
+                    // Reload the page after OK click
+                    location.reload();
+                });
+                console.log("Response:", response);
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong while assigning role!',
+                });
+                console.error("Error:", error);
+            }
+        });
+    }
+
+
+
+</script>
+<script>
+    $(document).ready(function () {
+        var url = baseurl + '/get_project';
+        var autoIncrementId = 1;
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+                $.each(response, function (index, item) {
+                    var rows = '';
+                    rows += '<tr>';
+                    rows += '<td>' + autoIncrementId++ + '</td>';
+                    rows += '<td>' + item['project_name'] + '</td>';
+                    rows += '<td>' + item['project_demography'] + '</td>';
+                    rows += '<td>' + item['project_input_type'] + '</td>';
+
+                    // Displaying each annotation with color code separately
+
+                    rows += '<td><img src="../../images/post-it.png" class="open-modal" style="border-radius: 0; width: 28px; height: 28px;" data-toggle="modal" onclick="getannotationdata(' + item["project_id"] + ')" data-target="#exampleModal3"></td>';
+                    rows += '<td><img src="../../images/add-button.png" class="open-modal" style="border-radius: 0; width: 28px; height: 28px;" data-toggle="modal" onclick="getannotationupdatedata(' + item["project_id"] + ', \'' + item["project_name"] + '\', \'' + item["project_demography"] + '\', \'' + item["annotation_id"] + '\', \'' + item["project_demography"] + '\', \'' + '\')" data-target="#exampleModal5"></td>';
+
+                    // rows += '<td><img src="../../images/users.png" class="open-modal" style="border-radius: 0; width: 30px; height: 30px;" data-toggle="modal" onclick="getuserdata(' + item["project_id"] + ')" data-target="#exampleModal1"></td>';
+                    // rows += '<td><img src="../../images/add-user.png" class="open-modal" style="border-radius: 0; width: 25px; height: 25px;" data-toggle="modal" onclick="addmoreuserdata(' + item["project_id"] + ')" data-target="#exampleModal2"></td>';
+                    rows += '<td><img src="../../images/loop.png" class="open-modal" style="border-radius: 0; width: 25px; height: 25px;" data-toggle="modal" onclick="get_configration_updatedata(' + item["project_id"] + ', \'' + item["project_name"] + '\', \'' + item["project_demography"] + '\', \'' + item["annotation_id"] + '\', \'' + item["project_demography"] + '\', \'' + '\')" data-target="#exampleModal4"></td>';
+
+                    rows += '</tr>';
+                    $('#newtable').append(rows);
+                });
+                $(document).ready(function () {
+                    $('#my_table1').dataTable({
+                        "pageLength": 5
+
+                    });
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    })
+
+</script>
+<script>
+    function getuserdata(project_id) {
+        var url = baseurl + '/get_project_user_list';
+        var formData = new FormData();
+        formData.append('project_id', parseInt(project_id));
+        $.ajax({
+            url: url,
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            data: formData,
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },                        
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+                if (response.length > 0) {
+                    $('#newtableuser').empty(); // Clear existing table data
+                    $.each(response, function (index, item) {
+                        var rows = '';
+                        rows += '<tr>';
+                        rows += '<td>' + (index + 1) + '</td>'; // Increment index for S.No
+                        rows += '<td>' + item['user_id'] + '</td>';
+                        rows += '<td>' + item['role_name'] + '</td>';
+                        rows += '<td><img src="../../images/delete.png" style="border-radius: 0; width: 20px; height: 20px;" onclick=\'data("delete",' + item["user_id"] + ')\'></td>';
+
+                        rows += '</tr>';
+                        $('#newtableuser').append(rows);
+                    });
+                } else {
+                    $('#newtableuser').empty(); // Clear existing table data if no users found
+                    $('#newtableuser').append('<tr><td colspan="4" style="text-align:center">No users found.</td></tr>'); // Show message
+                    console.log('No users found.');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+                $('#newtableuser').empty(); // Clear existing table data on error
+            }
+        });
+    }
+</script>
+
+<script>
+    function getannotationdata(project_id) {
+        var url = baseurl + '/get_project';
+        var dataToSend = {
+            project_id: parseInt(project_id)
+        };
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            data: JSON.stringify(dataToSend),
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+                $('#annotationtable').empty();
+                var project = response.find(project => project.project_id === project_id);
+                if (project && project.annotation_list.length > 0) {
+                    project.annotation_list.sort(function (a, b) {
+                        var labelA = a.split(',')[0];
+                        var labelB = b.split(',')[0];
+                        return labelA.localeCompare(labelB);
+                    });
+
+                    $.each(project.annotation_list, function (index, annotation) {
+                        var parts = annotation.split(',');
+                        var rows = '';
+                        rows += '<tr>';
+                        rows += '<td>' + (index + 1) + '</td>';
+                        rows += '<td>' + parts[1] + '</td>';
+                        rows += '<td>' + parts[0] + '</td>';
+                        rows += '<td>' + parts[2] + '</td>';
+                        rows += '<td><img src="../../images/delete.png" style="border-radius: 0; width: 20px; height: 20px;" onclick=\'data("delete",' + parts[1] + ')\'></td>';
+
+                        rows += '</tr>';
+                        $('#annotationtable').append(rows);
+                    });
+                } else {
+                    $('#annotationtable').append('<tr><td colspan="4" style="text-align:center">No Annotations found.</td></tr>');
+                    console.log('No annotations found.');
+                }
+            },
+
+
+        });
+    }
+</script>
+<script>
+    function upload_add_more_annotations() {
+        var updateid = $('#proid').val();
+        var update_anot_mark = $('#update_anot_mark').val();
+        console.log(updateid + "-----" + update_anot_mark)
+
+        var url = baseurl + '/add_more_annotation_to_project';
+        var formData = new FormData();
+        formData.append('project_id', parseInt(updateid));
+        formData.append('annotated_str', update_anot_mark);
+        $.ajax({
+            url: url,
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            data: formData,
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                location.reload();
+                // console.log(response)
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+</script>
+
+<script>
+    function addmoreuserdata(project_id) {
+        var updateid = $('#proidforuser').val(project_id);
+
+    }
+</script>
+<script>
+    function upload_add_more_more_user() {
+        var updateid = $('#proidforuser').val();
+        var userfile = $('#upload_more_users')[0].files[0];
+
+        var url = baseurl + '/add_more_users_to_project';
+        var formData = new FormData();
+        formData.append('project_id', parseInt(updateid));
+        formData.append('file', userfile);
+        $.ajax({
+            url: url,
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            data: formData,
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                location.reload();
+                // console.log(response)
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+</script>
+<script>
+    function getannotationupdatedata(project_id, project_name, demography, annotation_id, project_input_type) {
+        var updateid = $('#proid').val(project_id);
+        var annotation_ids = annotation_id.split(', ');
+        $('#update_anot_mark option').each(function () {
+            var optionValue = $(this).val();
+            $(this).prop('selected', false);
+            if (annotation_id.includes(optionValue)) {
+                $(this).prop('selected', true);
+            }
+        });
+        annotation_id = [];
+        $('#update_anot_mark').trigger('change');
+
+    }
+</script>
+
+<script>
+    function get_configration_updatedata(project_id, project_name, demography, annotation_id, project_input_type) {
+        $('#con_prod_id').val(project_id);
+        $('#updated_project_name').val(project_name);
+        demographyid = 2;
+        project_input_type = 1;
+        $('#updated_demography').val(demographyid);
+        $('#updated_input_type').val(project_input_type);
+    }
+</script>
+
+<script>
+    function updated_configration_data() {
+        var con_prod_id = $('#con_prod_id').val();
+        var updated_project_name = $('#updated_project_name').val();
+        var updated_demography = $('#updated_demography').val();
+        var updated_input_type = $('#updated_input_type').val();
+        var url = baseurl + '/update_project';
+        var formData = new FormData();
+        formData.append('project_id', parseInt(con_prod_id));
+        formData.append('project_name', updated_project_name);
+        formData.append('project_demography', updated_demography);
+        formData.append('project_dataSource', updated_input_type);
+        $.ajax({
+            url: url,
+            type: 'PUT',
+            processData: false,
+            contentType: false,
+            data: formData,
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                location.reload();
+                // console.log(response)
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+</script>
+    <script src="../../js/template.js"></script>
+
+</html>

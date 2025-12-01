@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MNW</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="../../vendors/feather/feather.css">
+    <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.css" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="../../vendors/select2/select2.min.css">
+    <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="../../vendors/js/vendor.bundle.base.js"></script>
+    <link rel="shortcut icon" href="../../images/logo/m-favicon.png" />
+     <style>
+        #loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0%   { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+
+    </style>
+
+</head>
+
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <!-- <div id="navbarPlaceholder"></div> -->
+        <div id="navbar-container"></div>
+        
+
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_settings-panel.html -->
+            <!-- <div id="topbar"></div> -->
+            <div id="sidbar-container"></div>
+
+
+            <!-- partial -->
+            <!-- <div id="menubar"></div> -->
+            
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <!-- <form> -->
+                                    <h3 class="text-primary">Tracking Count</h3>
+                                    <hr>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-4">
+                                            <label for="">Project Name</label>
+                                            <select name="projectname" class="form-control" id="projectname" required>
+                                                <option value="">--Select Project--</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-12 col-md-4">
+                                            <label for="">Cycle Name</label>
+                                            <select name="cyclename" class="form-control" id="cyclename" required>
+                                                <option value="">--Select Cycle--</option>
+                                            </select>
+                                            <br>
+                                        </div>
+                                        <div class="col-sm-12 col-md-4">
+                                            <label>Status</label>
+                                            <select id="project_status" class="form-control">
+                                                <option value="">--Select Status--</option>
+                                                <option value="picked_status">Production</option>
+                                                <option value="audit_status">Audit</option>
+                                                <option value="recheck_status">Recheck Production</option>
+                                                <option value="audit_recheck_status">Recheck Audit</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="d-flex justify-content-end col-md-12 mt-2">
+                                            <button class="btn btn-primary btn-sm" id="submitbtn">Submit</button>
+                                            <br>
+                                        </div>
+                                    </div>
+                                    
+                                    <hr>
+                                        <div id="countsResult" style="display:none;" >
+                                            <div class="row mt-4 justify-content-center">
+                                                <div class="col-md-4 text-center">
+                                                    <h6>Total Count:<span id="totalCount" class="fw-bold">0</span></h6>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-4">
+                                                <div class="col-md-3">
+                                                    <h6>Picked Count:<span id="pickedCount" class="fw-bold">0</span></h6>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <h6>Completed Count:<span id="completedCount" class="fw-bold">0</span></h6>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <h6>Open Count:<span id="openCount" class="fw-bold">0</span></h6>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <h6>Skipped Count:<span id="skippedCount" class="fw-bold">0</span></h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <br>                              
+                                </div>
+                                <br>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br>
+                    <div id="loader" class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                   
+                    <br>
+                </div>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+
+    <style>
+        select[name="my_table1_length"] {
+            height: 30px;
+        }
+
+        .paginate_button {
+            font-size: 12px;
+        }
+    </style>
+    <!-- container-scroller -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Include Select2 CSS & JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+    <script src="../../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+    <script src="../../vendors/datatables.net/jquery.dataTables.js"></script>
+    <script src="../../js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+
+    <!-- <script src="../../vendors/select2/select2.min.js"></script> -->
+    <!-- <script src="../../js/off-canvas.js"></script> -->
+    <script src="../../js/hoverable-collapse.js"></script>
+    <script src="../../js/settings.js"></script>
+    <script src="../../js/todolist.js"></script>
+    <script src="../../js/select2.js"></script>
+</body>
+    <script src="../../js/url.js"></script>
+    <script src="../../js/auth-setup.js"></script>
+    <script>
+  
+
+    $(document).ready(function () {
+
+     
+
+        loadNavbar();
+        loadsidbar();
+
+    });
+
+    $(document).ready(function () {
+        var url = baseurl + '/get_project';
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                // Empty and add new options
+                $('#projectname').empty().append('<option value="">--Select Project--</option>');
+                $.each(response, function (index, item) {
+                    $('#projectname').append('<option value="' + item.project_id + '">' + item.project_name + '</option>');
+                });
+
+                // Activate Select2 (makes dropdown searchable)
+                $('#projectname').select2({
+                    placeholder: "Select Option",
+                    allowClear: true
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#projectname').change(function () {
+            var projectId = $(this).val();
+            populateCycleData(projectId);
+        });
+
+        function populateCycleData(projectId) {
+            var formData = new FormData();
+            formData.append('project_id', projectId);
+
+            var url = baseurl + '/get_cycle';
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                success: function (response) {
+                    console.log(response);
+                    $('#cyclename').empty(); // Clear existing options
+                    $('#cyclename').append('<option value="">--Select Cycle--</option>');
+                    $.each(response, function (index, item) {
+                        $('#cyclename').append('<option value="' + item.cycle_id + '">' + item.cycle_name + '</option>');
+                    });
+                    $('#cyclename').select2({
+                        placeholder: "Select Option",
+                        allowClear: true
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+        
+    });
+</script>
+
+<script>
+    // Submit button click
+    $("#submitbtn").click(function(e) {
+        e.preventDefault();
+
+        const project_id = $("#projectname").val();
+        const cycle_id = $("#cyclename").val();
+        const status = $("#project_status").val();
+
+        if (!project_id || !cycle_id || !status) {
+            Swal.fire({
+                icon: "warning",
+                title: "Missing Fields",
+                text: "Please select Project, Cycle and Status!"
+            });
+            return;
+        }
+
+        $("#loader").show();
+
+        var url = baseurl + `/tracking-status-counts?project_id=${project_id}&cycle_id=${cycle_id}&status=${status}`;
+
+        $.ajax({
+            url: url,
+            type: "GET",
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function(response) {
+                $("#loader").hide();
+
+                // Handle API errors
+                if (response.error) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: response.error
+                    });
+                    return;
+                }
+
+                $("#countsResult").show();
+
+                // Update span values
+                $("#pickedCount").text(response.Picked || 0);
+                $("#completedCount").text(response.Completed || 0);
+                $("#openCount").text(response.Open || 0);
+                $("#skippedCount").text(response.Skipped || 0);
+                $("#totalCount").text(response.Total || 0); 
+            },
+            error: function(xhr, status, error) {
+                $("#loader").hide();
+                Swal.fire({
+                    icon: "error",
+                    title: "Request Failed",
+                    text: "Unable to fetch counts. Please try again."
+                });
+            }
+        });
+    });
+
+</script>
+    <script src="../../js/template.js"></script>
+
+</html>

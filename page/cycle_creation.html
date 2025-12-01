@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MNW</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="../../vendors/feather/feather.css">
+    <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../vendors/select2/select2.min.css">
+    <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- endinject -->
+    <link rel="shortcut icon" href="../../images/logo/m-favicon.png" />
+    
+    
+</head>
+
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <!-- <div id="navbarPlaceholder"></div> -->
+        <div id="navbar-container"></div>
+        
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_settings-panel.html -->
+            <!-- <div id="topbar"></div> -->
+            <div id="sidbar-container"></div>
+
+            <!-- partial -->
+            <!-- <div id="menubar"></div> -->
+            
+
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div class="col-sm-12 col-md-4 " style="border-right: 2px solid #4B49AC; padding-right: 15px;">
+                                    <br>
+                                    <h3 class="text-primary">Cycle Creation</h3>
+                                    <hr>
+                                    <br>
+                                    <label for="">Project Name</label>
+                                    <select name="projectname" class="form-control" id="projectname">
+                                        <option value="">--Select Project--</option>
+                                    </select>
+                                    <br>
+                                    <label for="">Cycle Name</label>
+                                    <input type="text" class="form-control" name="cyclename" id="cyclename">
+                                    <br>
+                                    <label for="">Start Date</label>
+                                    <input type="date" class="form-control" name="startdate" id="startdate">
+                                    <br>
+                                    <label for="">End Date</label>
+                                    <input type="date" class="form-control" name="enddate" id="enddate"><br>
+                                 
+                                    <fieldset class="mb-3">
+                                    <legend class="visually-hidden">Compliance and Status Options</legend>
+                                    <div class="form-check">
+                                    <input type="checkbox" class="position-absolute" id="planogram_compliance" name="Planogram_compliance" value="true">
+                                    <label class="form-check-label" for="planogram_compliance">Planogram Compliance</label>
+                                    </div>
+                                    <div class="form-check">
+                                    <input type="checkbox" class="position-absolute" id="equipment_compliance" name="equipment_compliance" value="true">
+                                    <label class="form-check-label" for="equipment_compliance">Equipment Verification</label>
+                                    </div>
+                                    <!-- <div class="form-check">
+                                    <input type="checkbox" class="position-absolute" id="out_of_stock" name="out_of_stock" value="true">
+                                    <label class="form-check-label" for="out_of_stock">Out of Stock</label>
+                                    </div> -->
+                                    <div class="form-check">
+                                    <input type="checkbox" class="position-absolute" id="recheck" name="recheck" value="true">
+                                    <label class="form-check-label" for="recheck">Recheck</label>
+                                    </div>
+                                </fieldset>
+                                    <div class="row">
+                                        <div class="col-md-9"></div>
+                                        <div class="col-md-1">
+                                            <br>
+                                            <button style="text-align: right;" class="btn btn-primary btn-sm"
+                                                onclick="insert_cycle_data()">Submit</button>
+                                            <br>
+                                        </div>
+                                    </div>
+                                </div>
+                          
+
+                                <div class="col-sm-12 col-md-8">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h3 class="text-primary">Search Cycle Details</h3>
+                                            <hr>
+                                            <br>
+                                            <div class="row">
+                                                <div class="col-md-3">
+
+                                                    <label for="">Project Name</label>
+                                                    <select name="table_projectname" id="table_projectname"
+                                                        class="form-control" onchange="populateCycleData(this.value)">
+                                                        <option value="">--Select--</option>
+                                                    </select>
+                                                </div>
+                                                <!-- <div class="col-md-4">
+                                                    <label for="">Cycle Name</label>
+                                                    <select name="table_cyclename" id="table_cyclename" class="form-control">
+                                                    <option value="">--Select--</option>    
+                                                    </select>
+                                                </div> -->
+                                                <div class="col-md-3 d-none">
+
+                                                    <button class="btn btn-primary mt-4" id="gettablevalue">Get</button>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="table-responsive">
+                                                <script src="../../vendors/js/vendor.bundle.base.js"></script>
+
+                                                <table class="table table-bordered"
+                                                    style="table-layout: auto; width: 100%; text-align: center;"
+                                                    id="my_table1">
+                                                    <thead class="text-center">
+                                                        <tr class="text-center">
+                                                            <th>S.no</th>
+                                                            <th>Project Name</th>
+                                                            <th>Cycle Name</th>
+                                                            <th>Cycle start date</th>
+                                                            <th>Cycle End date</th>
+                                                            <th>Equipment Verification</th>
+                                                            <!-- <th>OutOfStock</th> -->
+                                                            <th>Planogram Compliance</th>
+                                                            <th>Recheck</th>
+
+
+                                                            <th class="text-info">Edit </th>
+                                                            <th class="text-danger">Delete</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="newtable">
+
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                            <style>
+                                                #my_table1 th {
+                                                    font-size: 18px;
+                                                    text-align: center;
+                                                    /* Adjust the font size as needed */
+                                                }
+                                            </style>
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Cycle</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <label for="">Enter New cycle name</label>
+                                        <input type="hidden" name="updatecycleid" id="updatecycleid">
+                                        <input type="text" class="form-control" name="updatecyclename"
+                                            id="updatecyclename">
+                                        <br>
+                                        <label for="">Start Date</label>
+                                        <input type="date" class="form-control" name="updatestartdate"
+                                            id="updatestartdate">
+                                        <br>
+                                        <label for="">End Date</label>
+                                        <input type="date" class="form-control" name="updateenddate" id="updateenddate">
+
+                                        <fieldset class="mb-3">
+                                        <legend class="visually-hidden">Compliance and Status Options</legend>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="position-absolute" id="update_planogram_compliance" name="update_planogram_compliance">
+                                            <label class="form-check-label" for="update_planogram_compliance">Planogram Compliance</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="position-absolute" id="update_equipment_compliance" name="update_equipment_compliance">
+                                            <label class="form-check-label" for="update_equipment_compliance">Equipment Verification</label>
+                                        </div>
+                                        <!-- <div class="form-check">
+                                            <input type="checkbox" class="position-absolute" id="update_out_of_stock" name="update_out_of_stock">
+                                            <label class="form-check-label" for="update_out_of_stock">Out of Stock</label>
+                                        </div> -->
+                                        <div class="form-check">
+                                            <input type="checkbox" class="position-absolute" id="update_recheck" name="update_recheck">
+                                            <label class="form-check-label" for="update_recheck">Recheck</label>
+                                        </div>
+                                        </fieldset>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" onclick="updatedata()">Save
+                                            changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <br>
+
+                </div>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <style>
+        /* Style select elements with name="example" */
+        select[name="my_table1_length"] {
+            height: 30px;
+        }
+
+        .paginate_button {
+            font-size: 12px;
+        }
+    </style>
+    <!-- container-scroller -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+    <script src="../../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+    <script src="../../vendors/datatables.net/jquery.dataTables.js"></script>
+    <script src="../../js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="../../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+    <script src="../../js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <script src="../../vendors/js/vendor.bundle.base.js"></script>
+    <script src="../../vendors/select2/select2.min.js"></script>
+    <script src="../../js/off-canvas.js"></script> -->
+    <script src="../../js/hoverable-collapse.js"></script>
+    <script src="../../js/settings.js"></script>
+    <script src="../../js/todolist.js"></script>
+    <script src="../../js/select2.js"></script>
+
+
+</body>
+<script src="../../js/url.js"></script>
+
+<script src="../../js/auth-setup.js"></script>
+
+<script>
+    $(document).ready(function () {
+        
+        loadNavbar();
+        loadsidbar();
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var url = baseurl + '/get_project';
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+                $.each(response, function (index, item) {
+                    var select = ""; // Initialize select variable
+                    select += '<option value="' + item.project_id + '">' + item.project_name + '</option>'; // Access item properties correctly
+                    $('#projectname').append(select);
+                    $('#table_projectname').append(select);
+
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#gettablevalue').click(function () {
+            var projectId = $('#table_projectname').val();
+            populateCycleData(projectId);
+        });
+    });
+
+    function populateCycleData(projectId) {
+        var formData = new FormData();
+        formData.append('project_id', projectId); // Append projectId to FormData
+
+        var url = baseurl + '/get_cycle'; // Update the URL to fetch cycle data for the selected project
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                console.log(response);
+                // Clear existing table rows
+                var table = $('#my_table1').DataTable();
+                table.clear().draw();
+
+                if (response.length === 0) {
+                    $('#newtable').html('<tr><td colspan="7" class="text-center">No records found</td></tr>');
+                } else {
+                    $.each(response, function (index, item) {
+                        console.log(item)
+                        var row = [
+                            (index + 1),
+                            item.project_name,
+                            item.cycle_name,
+                            item.cycle_start_date,
+                            item.cycle_end_date,
+                            // item.equipment_complince,
+                            // item.out_of_stock,
+                            // item.Planogram_complince,
+                            // item.recheck,
+                            item.equipment_complince ? 'true' : 'false',
+                            // item.out_of_stock ? 'true' : 'false',
+                            item.Planogram_complince ? 'true' : 'false',
+                            item.recheck ? 'true' : 'false',
+                            // '<img src="../../images/edit.png" class="open-modal" style="border-radius: 0; width: 20px; height: 20px;" data-toggle="modal" onclick=\'data("update",' + item["cycle_id"] + ',"' + item['cycle_name'] + '","' + item['cycle_start_date'] + '","' + item['cycle_end_date'] + '")\' data-target="#exampleModal">',
+                            '<img src="../../images/edit.png" class="open-modal" style="border-radius: 0; width: 20px; height: 20px;" data-toggle="modal" onclick=\'data("update",' + item["cycle_id"] + ',"' + item["cycle_name"] + '","' + item["cycle_start_date"] + '","' + item["cycle_end_date"] + '",' +  JSON.stringify(item["Planogram_complince"]) + ',' +  JSON.stringify(item["equipment_complince"]) + ',' +  JSON.stringify(item["out_of_stock"]) + ',' + JSON.stringify(item["recheck"]) + ')\' data-target="#exampleModal">',
+                            '<img src="../../images/delete.png" style="border-radius: 0; width: 20px; height: 20px;" onclick=\'data("delete",' + item["cycle_id"] + ')\'></td>'
+                        ];
+                        console.log(row)
+                        table.row.add(row).draw(false);
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+</script>
+<script>
+    function insert_cycle_data() {
+        var projectname = $('#projectname').val();
+        var cyclename = $('#cyclename').val();
+        var startdate = $('#startdate').val();
+        var enddate = $('#enddate').val();
+        var planogram_compliance = $('#planogram_compliance').is(':checked');
+        var equipment_compliance = $('#equipment_compliance').is(':checked');
+        var out_of_stock = $('#out_of_stock').is(':checked');
+        var recheck = $('#recheck').is(':checked');
+            
+        if (!projectname || !cyclename || !startdate || !enddate) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning',
+                text: 'Please fill all the fields!',
+            });
+            return;
+        }
+
+        var url = baseurl + '/cycle_creation';
+
+        var dataToSend = {
+            project_id: projectname,
+            cycle_name: cyclename,
+            cycle_start_date: startdate,
+            cycle_end_date: enddate,
+            Planogram_complince:planogram_compliance,
+            equipment_complince:equipment_compliance,
+            out_of_stock:out_of_stock,
+            recheck:recheck
+
+        };
+        console.log(dataToSend)
+
+        // $.ajax({
+        //     url: url,
+        //     type: 'POST',
+        //     contentType: 'application/json',
+        //     data: JSON.stringify(dataToSend),
+        //     success: function (response) {
+        //         alert("Cycle Added Successfully")
+        //         location.reload();
+        //     },
+        //     error: function (xhr, status, error) {
+        //         console.error('Error:', error);
+        //     }
+        // });
+        $.ajax({
+            url: url,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(dataToSend),
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                if (response === "Cyclename Already Exists") {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response
+                    });
+                } else if (response === "Success") {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: "Cycle Created Successfully!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    };
+
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script>
+    function data(key, id, cyclename, cyclestart_date, cycleend_date,update_planogram_compliance,update_equipment_compliance,update_out_of_stock,update_recheck) {
+        var id = parseInt(id);
+        if (key === "update") {
+            $('#updatecycleid').val(id);
+            $('#updatecyclename').val(cyclename);
+            $('#update_planogram_compliance').prop('checked', update_planogram_compliance);
+            $('#update_equipment_compliance').prop('checked', update_equipment_compliance);
+            // $('#update_out_of_stock').prop('checked', update_out_of_stock);
+            $('#update_recheck').prop('checked', update_recheck);
+            var startDateParts = cyclestart_date.split('-');
+            var endDateParts = cycleend_date.split('-');
+            var formattedStartDate = startDateParts[2] + '-' + startDateParts[1] + '-' + startDateParts[0];
+            var formattedEndDate = endDateParts[2] + '-' + endDateParts[1] + '-' + endDateParts[0];
+
+            $('#updatestartdate').val(formattedStartDate);
+            $('#updateenddate').val(formattedEndDate);
+        } else if (key === "delete") {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You won\'t be able to revert this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var url = baseurl + '/delete_cycle';
+                    var formData = new FormData();
+                    formData.append('cycle_id', parseInt(id));
+                    // $.ajax({
+                    //     url: url,
+                    //     type: 'DELETE',
+                    //     processData: false,
+                    //     contentType: false,
+                    //     data: formData,
+                    //     success: function (response) {
+                    //         // Reload the page or update the table as needed
+                    //         location.reload();
+                    //     },
+                    //     error: function (xhr, status, error) {
+                    //         console.error('Error:', error);
+                    //     }
+                    // });
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                        success: function (response) {
+                            var projectId = $('#table_projectname').val();
+                            populateCycleData(projectId);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error:', error);
+                        }
+                    });
+                }
+            });
+        }
+    }
+</script>
+<script>
+    function updatedata() {
+        var id = $('#updatecycleid').val();
+        var cyclename = $('#updatecyclename').val();
+        var startdate = $('#updatestartdate').val();
+        var enddate = $('#updateenddate').val();
+        var planogram_compliance = $('#update_planogram_compliance').is(':checked');
+        var equipment_compliance = $('#update_equipment_compliance').is(':checked');
+        var out_of_stock = $('#update_out_of_stock').is(':checked');
+        var recheck = $('#update_recheck').is(':checked');
+
+        var url = baseurl + '/update_cycle';
+        var dataToSend = {
+            id: id,
+            cycle_name: cyclename,
+            cycle_start_date: startdate,
+            cycle_end_date: enddate,
+            Planogram_complince:planogram_compliance,
+            equipment_complince:equipment_compliance,
+            out_of_stock:out_of_stock,
+            recheck:recheck
+        };
+
+        $.ajax({
+            url: url,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(dataToSend),
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                $('.btn.btn-secondary[data-dismiss="modal"]').click();
+                var projectId = $('#table_projectname').val();
+                populateCycleData(projectId);
+
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+</script>
+    <script src="../../js/template.js"></script>
+
+</html>

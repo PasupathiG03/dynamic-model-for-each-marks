@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MNW</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="../../vendors/feather/feather.css">
+    <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.css" rel="stylesheet">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <link rel="stylesheet" href="../../vendors/select2/select2.min.css">
+    <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="../../images/logo/m-favicon.png" />
+    <script src="../../vendors/js/vendor.bundle.base.js"></script>
+    <script src="../../vendors/select2/select2.min.js"></script>
+    <script src="../../js/off-canvas.js"></script>
+    <script src="../../js/hoverable-collapse.js"></script>
+    <script src="../../js/settings.js"></script>
+    <script src="../../js/todolist.js"></script>
+    <script src="../../js/select2.js"></script>
+    
+    <script>
+        selected_planogram = null;
+        selected_equipment_complince = null;
+        selected_out_of_stock = null;
+        selected_recheck = null;
+        $(document).ready(function () {
+            var dynamicpdf = "";
+            $(document).ready(function () {
+                // ✅ Parse URL Parameters
+                const params = new URLSearchParams(window.location.search);
+                const allCountsRaw = params.get('allCounts');
+                let redTickCount = 0;
+                let blueTickCount = 0;
+
+                if (allCountsRaw) {
+                    try {
+                        const allCounts = JSON.parse(decodeURIComponent(allCountsRaw));
+                        allCounts.forEach(item => {
+                            if (item.color === "Red" && item.shape === "Cross") {
+                                redTickCount = item.count;
+                            }
+                            if (item.color === "Blue" && item.shape === "Cross") {
+                                blueTickCount = item.count;
+                            }
+                        });
+
+                        console.log("✅ Red Tick Count:", redTickCount);
+                        console.log("✅ Blue Tick Count:", blueTickCount);
+                    } catch (err) {
+                        console.error("❌ Error parsing allCounts:", err);
+                    }
+                }
+                $('#loaderModal').show();
+                var userid = localStorage.getItem('id');
+                console.log(userid + "userid");
+                var url = baseurl + '/get_audit_qa';
+                var formData = new FormData();
+                formData.append('emp_id', userid);
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                    success: function (response) {
+                        $('#loaderModal').hide();
+                        if (response && response.length > 0) {
+                            console.log(response[0].Planogram_complince,'fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
+                            selected_planogram = response[0].Planogram_complince;
+                            selected_equipment_complince = response[0].equipment_complince;
+                            selected_out_of_stock = response[0].out_of_stock;
+                            selected_recheck = response[0].recheck;
+
+                            if (selected_planogram == true){
+                                
+                                $('#d_first_row').append(
+                                "<div class='col-12'><div class='card-header' style='background-color: #007BFF; color: white; padding: 10px; font-weight: bold;''>Planogram Compliance</div><br></div>" +
+                                    
+                                
+                                "<div class='col-md-4'>" +
+                                "<label for=''>Missing_Skus Without OOS</label><br>" +
+                                "<input type='text' class='form-control' name='d_missing_skus_without_oos' id='d_missing_skus_without_oos' required>" +
+                                "</div>" +
+                                "<div class='col-md-4'>" +
+
+                                "<label for=''>Incorrectly_Placed_Skus</label><br>" +
+                                "<input type='text' class='form-control' name='d_incorrectly_placed_skus' " +
+                                "id='d_incorrectly_placed_skus' required>" +
+                                "</div>" +
+
+                                "<div class='col-md-4'>" +
+                                "<label for=''>Missing_Price_Card</label><br>" +
+                                "<input type='text' class='form-control' name='d_missing_price_card' " +
+                                "id='d_missing_price_card' required>" +
+                                "</div>"+
+
+                                // "<div class='col-md-4'>" +
+                                // "<label for=''>Planogram Status</label><br>" +
+                                // "<input type='text' class='form-control' name='d_planogram_status' " +
+                                // "id='d_planogram_status' required>" +
+                                // "</div>" + 
+                                "<div class='col-md-4'>" +
+                                    "<label for='d_planogram_status'>Planogram_Status</label><br>" +
+                                    "<select class='form-control' name='d_planogram_status' id='d_planogram_status' required>" +
+                                    "<option value='Workable'>Workable</option>" +
+                                    "<option value='Non Workable - Image not qualified for compliance'>Non Workable - Image not qualified for compliance</option>" +
+                                    "<option value='Non Workable - PDF not available on SSO'>Non Workable - PDF not available on SSO</option>" +
+                                    "<option value='Non Workable - Store not found on SSO'>Non Workable - Store not found on SSO</option>" +
+                                    "<option value='Non Workable - Store image/Segment image missing'>Non Workable - Store image/Segment image missing</option>" +
+                                    "<option value='Non Workable - Planograms shelf count/segment size differs'>Non Workable - Planograms shelf count/segment size differs</option>" +
+                                    "<option value='Non Workable - Incorrect POG tagging(POG has more segments than site)'>Non Workable - Incorrect POG tagging(POG has more segments than site)</option>" +
+                                    "<option value='Non Workable - Incorrect POG tagging(Site has more segments than POG)'>Non Workable - Incorrect POG tagging(Site has more segments than POG)</option>" +
+                                    "<option value='Non Workable - Planograms shelf count/segment size differs - 40%'>Non Workable - Planograms shelf count/segment size differs - 40%</option>" +
+                                    "<option value='Non Workable - Incorrect POG tagging(POG has more segments than site) - 0%'>Non Workable - Incorrect POG tagging(POG has more segments than site) - 0%</option>" +
+                                    "<option value='Non Workable - Incorrect POG tagging(POG has more segments than site) - 40%'>Non Workable - Incorrect POG tagging(POG has more segments than site) - 40%</option>" +
+                                    "<option value='Non Workable - Incorrect POG tagging(Site has more segments than POG) - 0%'>Non Workable - Incorrect POG tagging(Site has more segments than POG) - 0%</option>" +
+                                    "<option value='Non Workable - Incorrect POG tagging(Site has more segments than POG) - 40%'>Non Workable - Incorrect POG tagging(Site has more segments than POG) - 40%</option>" +
+                                    "</select>" +
+                                "</div>" +
+
+
+
+                                "<div class='col-md-4'>" +
+                                "<label for=''>POG_Image_Status</label><br>" +
+                                "<input type='text' class='form-control' name='d_pog_image_status' " +
+                                "id='d_pog_image_status' required>" +
+                                "</div>" + 
+
+                                "<div class='col-md-4'>" +
+                                "<label for=''>Review_Status</label><br>" +
+                                "<input type='text' class='form-control' name='d_review_status' " +
+                                "id='d_review_status' required>" +
+                                "</div>" +
+
+                                "<div class='col-md-4'>" +
+                                "<label for=''>No Of Error</label><br>" +
+                                "<input type='text' class='form-control' name='d_nooferror' " +
+                                "id='d_nooferror' required>" +
+                                "</div>" +
+
+                                "<div class='col-md-4'>" +
+                                "<label for=''>Error Description</label><br>" +
+                                "<input type='text' class='form-control' name='d_errordes' " +
+                                "id='d_errordes' required>" +
+                                "</div>" 
+
+                                // "<div class='col-md-4'>" +
+                                // "<label for=''>Completed Date</label><br>" +
+                                // "<input type='text' class='form-control' name='d_completed_date' " +
+                                // "id='d_completed_date' required>" +
+                                // "</div>" +
+
+                                // "<div class='col-md-4'>" +
+                                // "<label for=''>Allocation</label><br>" +
+                                // "<input type='text' class='form-control' name='d_allocation_date' " +
+                                // "id='d_allocation_date' required>" +
+                                // "</div>" 
+                                               
+
+                                );
+                                $('#d_missing_skus_without_oos').val(redTickCount); // Red Tick
+                                $('#d_incorrectly_placed_skus').val(blueTickCount); // Blue Tick
+
+                            }
+                            if (selected_equipment_complince == true){
+                                $('#d_second_row').append(
+                                        // "<div class='card-header'>Equipment Verification</div>" +
+                                        // "<div class='card-header' style='background-color: #007BFF; color: white; padding: 10px; font-weight: bold;'>Equipment Verification</div>" +
+                                    "<div class='col-12'><div class='card-header' style='background-color: #007BFF; color: white; padding: 10px; font-weight: bold;''>Equipment Verification</div><br></div>" +
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Compliant/Non-Compliant</label><br>" +
+                                    "<input type='text' class='form-control' name='d_compliant_noncompliant' id='d_compliant_noncompliant' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>No. Of Bays In Pdf</label><br>" +
+                                    "<input type='text' class='form-control' name='d_no_of_bays_in_pdf' " +
+                                    "id='d_no_of_bays_in_pdf' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>No. Of Bays Per Images</label><br>" +
+                                    "<input type='text' class='form-control' name='d_no_of_bays_in_images' " +
+                                    "id='d_no_of_bays_in_images' required>" +
+                                    "</div>"+
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Width Of POG In Pdf</label><br>" +
+                                    "<input type='text' class='form-control' name='width_of_pog_pdf' " +
+                                    "id='width_of_pog_pdf' required>" +
+                                    "</div>" + 
+                                    
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Width Of Bays Per Image</label><br>" +
+                                    "<input type='text' class='form-control' name='width_of_pog_image' " +
+                                    "id='width_of_pog_image' required>" +
+                                    "</div>" + 
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>No. Of Shelves In Pdf Eg. (4+4+4)</label><br>" +
+                                    "<input type='text' class='form-control' name='d_shelves_pdf' " +
+                                    "id='d_shelves_pdf' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>No. Of Shelves Per Image Eg. (4+4+4)</label><br>" +
+                                    "<input type='text' class='form-control' name='d_shelves_image' " +
+                                    "id='d_shelves_image' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Total Shelves In Pdf</label><br>" +
+                                    "<input type='text' class='form-control' name='d_totalshelves_pdf' " +
+                                    "id='d_totalshelves_pdf' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Total Shelves In Image</label><br>" +
+                                    "<input type='text' class='form-control' name='d_totalshelves_image' " +
+                                    "id='d_totalshelves_image' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>No Of Error</label><br>" +
+                                    "<input type='text' class='form-control' name='d_nooferror_eq' " +
+                                    "id='d_nooferror_eq' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Error Description</label><br>" +
+                                    "<input type='text' class='form-control' name='d_errordes_eq' " +
+                                    "id='d_errordes_eq' required>" +
+                                    "</div>" 
+
+                                );
+
+
+                            }
+                            if (selected_out_of_stock == true){
+                                $('#d_third_row').append(
+                                        // "<div class='card-header'>Equipment Verification</div>" +
+                                        // "<div class='card-header' style='background-color: #007BFF; color: white; padding: 10px; font-weight: bold;'>Equipment Verification</div>" +
+                                    "<div class='col-12'><div class='card-header' style='background-color: #007BFF; color: white; padding: 10px; font-weight: bold;''>Out of Stock</div><br></div>" +
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>No Of Missing Sku Without OOS</label><br>" +
+                                    "<input type='text' class='form-control' name='d_no_of_missing_skus_without_oos' id='d_no_of_missing_skus_without_oos' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>No Of Misplaced Sku</label><br>" +
+                                    "<input type='text' class='form-control' name='d_no_of_misplaced_skus' " +
+                                    "id='d_no_of_misplaced_skus' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Missing_Price_Card</label><br>" +
+                                    "<input type='text' class='form-control' name='d_oss_missing_price_card' " +
+                                    "id='d_oss_missing_price_card' required>" +
+                                    "</div>"+
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>No Of Error</label><br>" +
+                                    "<input type='text' class='form-control' name='no_of_error' " +
+                                    "id='no_of_error' required>" +
+                                    "</div>" + 
+                                    
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Error Description</label><br>" +
+                                    "<input type='text' class='form-control' name='error_description' " +
+                                    "id='error_description' required>" +
+                                    "</div>" + 
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Audit By</label><br>" +
+                                    "<input type='text' class='form-control' name='audit_by' " +
+                                    "id='audit_by' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Audit Date</label><br>" +
+                                    "<input type='text' class='form-control' name='audit_date' " +
+                                    "id='audit_date' required>" +
+                                    "</div>" 
+                                );
+
+
+                            }
+                            if (selected_out_of_stock == true){
+                                $('#d_third_row').append(
+                                        // "<div class='card-header'>Equipment Verification</div>" +
+                                        // "<div class='card-header' style='background-color: #007BFF; color: white; padding: 10px; font-weight: bold;'>Equipment Verification</div>" +
+                                    "<div class='col-12'><div class='card-header' style='background-color: #007BFF; color: white; padding: 10px; font-weight: bold;''>Out of Stock Recheck</div><br></div>" +
+                                    
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>No Of Missing Sku Without OOS</label><br>" +
+                                    "<input type='text' class='form-control' name='d_no_of_missing_skus_without_oos1' id='d_no_of_missing_skus_without_oos1' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>No Of Misplaced Sku</label><br>" +
+                                    "<input type='text' class='form-control' name='d_no_of_misplaced_skus1' " +
+                                    "id='d_no_of_misplaced_skus1' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Missing_Price_Card</label><br>" +
+                                    "<input type='text' class='form-control' name='d_oss_missing_price_card1' " +
+                                    "id='d_oss_missing_price_card1' required>" +
+                                    "</div>"+
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>No Of Error</label><br>" +
+                                    "<input type='text' class='form-control' name='no_of_error1' " +
+                                    "id='no_of_error1' required>" +
+                                    "</div>" + 
+                                    
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Error Description</label><br>" +
+                                    "<input type='text' class='form-control' name='error_description1' " +
+                                    "id='error_description1' required>" +
+                                    "</div>" + 
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Audit By</label><br>" +
+                                    "<input type='text' class='form-control' name='audit_by1' " +
+                                    "id='audit_by1' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Audit Date</label><br>" +
+                                    "<input type='text' class='form-control' name='audit_date1' " +
+                                    "id='audit_date1' required>" +
+                                    "</div>" 
+                                              
+                                );
+
+
+                            }
+                            if (selected_recheck == true){
+                                $('#d_four_row').append(
+                                        // "<div class='card-header'>Equipment Verification</div>" +
+                                        // "<div class='card-header' style='background-color: #007BFF; color: white; padding: 10px; font-weight: bold;'>Equipment Verification</div>" +
+                                    "<div class='col-12'><div class='card-header' style='background-color: #007BFF; color: white; padding: 10px; font-weight: bold;''>Recheck</div><br></div>" +
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Recheck_Missing_Skus_Score</label><br>" +
+                                    "<input type='text' class='form-control' name='d_recheck_missing_skus_score' id='d_recheck_missing_skus_score' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Recheck_Incorrectly_Placed_Skus_Score</label><br>" +
+                                    "<input type='text' class='form-control' name='d_recheck_incorrect_placed_skus_score' " +
+                                    "id='d_recheck_incorrect_placed_skus_score' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Recheck_Missing_Price_Card_Score</label><br>" +
+                                    "<input type='text' class='form-control' name='d_recheck_missing_price_card_score' " +
+                                    "id='d_recheck_missing_price_card_score' required>" +
+                                    "</div>"+
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Recheck_Planogram_Status</label><br>" +
+                                    "<input type='text' class='form-control' name='d_recheck_planogram_status' " +
+                                    "id='d_recheck_planogram_status' required>" +
+                                    "</div>" + 
+                                    
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Recheck_POG_Image_Status</label><br>" +
+                                    "<input type='text' class='form-control' name='d_recheck_pog_image_status' " +
+                                    "id='d_recheck_pog_image_status' required>" +
+                                    "</div>" + 
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Re_Check_Review_Status</label><br>" +
+                                    "<input type='text' class='form-control' name='d_recheck_review_status' " +
+                                    "id='d_recheck_review_status' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Recheck_Remarks</label><br>" +
+                                    "<input type='text' class='form-control' name='recheck_remarks' " +
+                                    "id='recheck_remarks' required>" +
+                                    "</div>" +
+
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Recheck_Completed_Date</label><br>" +
+                                    "<input type='text' class='form-control' name='recheck_completed_date' " +
+                                    "id='recheck_completed_date' required>" +
+                                    "</div>" +
+
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Recheck_Allocation</label><br>" +
+                                    "<input type='text' class='form-control' name='d_recheck_allocation' " +
+                                    "id='d_recheck_allocation' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>No Of Error</label><br>" +
+                                    "<input type='text' class='form-control' name='d_nooferror_re' " +
+                                    "id='d_nooferror_re' required>" +
+                                    "</div>" +
+
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Error Description</label><br>" +
+                                    "<input type='text' class='form-control' name='d_errordes_re' " +
+                                    "id='d_errordes_re' required>" +
+                                    "</div>" 
+                                              
+                                );
+                            }
+                        }
+                        console.log(response)
+                        if (response && response.length > 0) {
+                            var completed = response[0].completed;
+                            var total = response[0].total;
+                            var skipped = response[0].skiped_count;
+
+                            $('#comtext').text(completed + '/' + total);
+                            $('#count').text(skipped);
+
+                            var cycleName = response[0].cycle_name;
+                            console.log(cycleName)
+                            var skiped_count = response[0].skiped_count;
+                            var production_id = response[0].unique_id;
+
+                            var storenumber = response[0].sheet['Store Number'];
+                            var eight_digit_store_number = response[0].sheet['4 - Digit Store Number'];
+
+
+                            var department_name = response[0].sheet['Department Name'];
+                            var planogram_type = response[0].sheet['Planogram Type'];
+                            var planogram_name = response[0].sheet['Planogram Name'];
+                            var total_no_of_sku = response[0].sheet['No. of SKUs'];
+                            var pdfPath = response[0].pdf_path_name[0];
+
+                            var workable_status = response[0].workable_status;
+                            console.log(workable_status)
+
+                            var Image_Qualified_for_Compliance = response[0].Image_Qualified_for_Compliance;
+                            var No_of_Missing_SKUs = response[0].No_of_Missing_SKUs;
+                            var Incorrectly_placed_SKUs = response[0].Incorrectly_placed_SKUs;
+                            // var Remarks = response[0].Remarks;
+                            var No_of_Bays = response[0].sheet['No. of Bays'];
+                            var No_of_Shelves = response[0].sheet['No. of Shelves'];
+                            var Size_of_Bays = response[0].sheet['Size of Bays'];
+                            var green_count = response[0].green_count;
+                            var red_count = response[0].red_count;
+                            var blue_count = response[0].blue_count;
+
+                            var Missing_skus_without_oos = response[0].sheet['Missing_Skus Without OOS'];
+                            var Incorrectly_placed_skus = response[0].sheet['Incorrectly_Placed_Skus'];
+                            var Missing_price_card = response[0].sheet['Missing_Price_Card'];
+                            var Planogram_Status = response[0].sheet['Planogram_Status'];
+                            var Pog_image_status = response[0].sheet['POG_Image_Status'];
+                            var Review_status = response[0].sheet['Review_Status'];
+                            var Remarks = response[0].sheet['Remarks'];
+
+
+                            var Complaint_noncomplaint = response[0].sheet['Compliant/Non-Compliant'];
+                            var No_of_bays_in_pdf = response[0].sheet['No. Of Bays In Pdf'];
+                            var No_of_bays_per_images = response[0].sheet['No. Of Bays Per Images'];
+                            var Width_of_pog_in_pdf = response[0].sheet['Width Of POG In Pdf'];
+                            var Width_of_bays_per_image = response[0].sheet['Width Of Bays Per Image'];
+                            var No_of_shelves_in_pdf = response[0].sheet['No. Of Shelves In Pdf Eg. (4+4+4)'];
+                            var No_of_shelves_per_images = response[0].sheet['No. Of Shelves Per Image Eg. (4+4+4)'];
+                            var Total_shelves_in_pdf = response[0].sheet['Total Shelves In Pdf'];
+                            var Total_shelves_in_images = response[0].sheet['Total Shelves Per Image'];
+                            var shelf_segment_sizw_discrepency = response[0].sheet['Shelf/Segment Size Discrepency(Yes/No)'];
+                            var Remarks_eq = response[0].sheet['Remarks_eq'];
+
+                            var No_of_missing_sku_without_oos = response[0].sheet['No_of_missing_sku_without_oos'];
+                            var No_of_misplaced_skus = response[0].sheet['No_of_misplaced_skus'];
+                            var Missed_price_card = response[0].sheet['Missed_price_card'];
+                            var No_of_error = response[0].sheet['No_of_error'];
+                            var Error_description = response[0].sheet['Error_description'];
+                            var Audited_by = response[0].sheet['Audited_by'];
+                            var Audit_date = response[0].sheet['Audit_date'];
+
+                            var No_of_missing_sku_without_oos_re = response[0].sheet['No_of_missing_sku_without_oos_re'];
+                            var No_of_misplaced_skus_re = response[0].sheet['No_of_misplaced_skus_re'];
+                            var Missed_price_card_re = response[0].sheet['Missed_price_card_re'];
+                            var No_of_error_re = response[0].sheet['No_of_error_re'];
+                            var Error_description_re = response[0].sheet['Error_description_re'];
+                            var Audited_by_re = response[0].sheet['Audited_by_re'];
+                            var Audit_date_re = response[0].sheet['Audit_date_re'];
+
+                            var Recheck_missing_skus_score = response[0].sheet['Recheck_Missing_Skus_Score'];
+                            var Recheck_incorrectly_placed_skus_score = response[0].sheet['Recheck_Incorrectly_Placed_Skus_Score'];
+                            var Recheck_missing_price_card_score = response[0].sheet['Recheck_Missing_Price_Card_Score'];
+                            var Recheck_planogram_status = response[0].sheet['Recheck_Planogram_Status'];
+                            var Recheck_pog_image_status = response[0].sheet['Recheck_POG_Image_Status'];
+                            var Recheck_review_status = response[0].sheet['Re_Check_Review_Status'];
+                            var Recheck_remarks= response[0].sheet['Recheck_Remarks'];
+
+
+
+
+
+
+
+
+                            var dynamicUrl = baseurl + '/' + pdfPath;
+                            var imagePaths = response[0].image_path_name;
+                            url = dynamicUrl;
+                            dynamicpdf = dynamicUrl;
+                            $('#unique_id').val(production_id);
+
+                            $('#cycle').val(cycleName);
+                            $('#storenumber').val(storenumber);
+                            $('#8digit_store_number').val(eight_digit_store_number);
+
+                            $('#departmentname').val(department_name);
+                            $('#departmenttype').val(planogram_type);
+                            $('#planogramname').val(planogram_name);
+                            $('#total_no_of_skus').val(total_no_of_sku);
+
+                            // $('#d_missing_skus_without_oos').val(Missing_skus_without_oos);
+                            // $('#d_incorrectly_placed_skus').val(Incorrectly_placed_skus);
+                            if (!redTickCount) {
+                                $('#d_missing_skus_without_oos').val(Missing_skus_without_oos);
+                            } else {
+                                $('#d_missing_skus_without_oos').val(redTickCount);
+                            }
+
+                            if (!blueTickCount) {
+                                $('#d_incorrectly_placed_skus').val(Incorrectly_placed_skus);
+                            } else {
+                                $('#d_incorrectly_placed_skus').val(blueTickCount);
+                            }
+
+                            $('#d_missing_price_card').val(Missing_price_card);
+                            $('#d_planogram_status').val(Planogram_Status);
+                            $('#d_pog_image_status').val(Pog_image_status);
+                            $('#d_review_status').val(Review_status);
+                            $('#d_remarks').val(Remarks);
+
+                            $('#d_compliant_noncompliant').val(Complaint_noncomplaint);
+                            $('#d_no_of_bays_in_pdf').val(No_of_bays_in_pdf);
+                            $('#d_no_of_bays_in_images').val(No_of_bays_per_images);
+                            $('#width_of_pog_pdf').val(Width_of_pog_in_pdf);
+                            $('#width_of_pog_image').val(Width_of_bays_per_image);
+                            $('#d_shelves_pdf').val(No_of_shelves_in_pdf);
+                            $('#d_shelves_image').val(No_of_shelves_per_images);
+                            $('#d_totalshelves_pdf').val(Total_shelves_in_pdf);
+                            $('#d_totalshelves_image').val(Total_shelves_in_images);
+                            $('#d_size_dis').val(shelf_segment_sizw_discrepency);
+                            $('#d_remarks_en').val(Remarks_eq);
+
+
+                            $('#d_no_of_missing_skus_without_oos').val(No_of_missing_sku_without_oos);
+                            $('#d_no_of_misplaced_skus').val(No_of_misplaced_skus);
+                            $('#d_oss_missing_price_card').val(Missed_price_card);
+                            $('#no_of_error').val(No_of_error);
+                            $('#error_description').val(Error_description);
+                            $('#audit_by').val(Audited_by);
+                            $('#audit_date').val(Audit_date);
+
+                            $('#d_no_of_missing_skus_without_oos1').val(No_of_missing_sku_without_oos_re);
+                            $('#d_no_of_misplaced_skus1').val(No_of_misplaced_skus_re);
+                            $('#d_oss_missing_price_card1').val(Missed_price_card_re);
+                            $('#no_of_error1').val(No_of_error_re);
+                            $('#error_description1').val(Error_description_re);
+                            $('#audit_by1').val(Audited_by_re);
+                            $('#audit_date1').val(Audit_date_re);
+
+
+                            $('#d_recheck_missing_skus_score').val(Recheck_missing_skus_score);
+                            $('#d_recheck_incorrect_placed_skus_score').val(Recheck_incorrectly_placed_skus_score);
+                            $('#d_recheck_missing_price_card_score').val(Recheck_missing_price_card_score);
+                            $('#d_recheck_planogram_status').val(Recheck_planogram_status);
+                            $('#d_recheck_pog_image_status').val(Recheck_pog_image_status);
+                            $('#d_recheck_review_status').val(Recheck_review_status);
+                            $('#recheck_remarks').val(Recheck_remarks);
+
+
+
+
+
+
+
+                            $('#available_checking_text').text('');
+
+                            if (!pdfPath && (!imagePaths || imagePaths.length === 0)) {
+                                $('#available_checking_text').text('PDF and Image not available');
+                                $('#opentabaudit').hide();
+                            }
+
+                            else if (!pdfPath) {
+                                $('#available_checking_text').text('PDF not available');
+                                $('#opentabaudit').hide();
+
+                            }
+                            else if (!imagePaths || imagePaths.length === 0) {
+                                $('#available_checking_text').text('Image not available');
+                                $('#opentabaudit').hide();
+
+                            }
+
+                            var workable_non_workable = workable_status;
+
+                            $('#workable_non_workable').val(workable_non_workable);
+                            console.log(Image_Qualified_for_Compliance)
+
+                            $('#first-row').empty();
+                            
+                            const queryString = window.location.search;
+                            const urlParams = new URLSearchParams(queryString);
+                            const status = urlParams.get('status');
+                            console.log(status)
+                            if (status == "audit") {
+                                $('#opentabaudit').hide();
+                                $('#open_pdated_pdf').show();
+
+                                // 👉 get button-wise UPC JSON from URL
+                                const upcDataString = urlParams.get('upcData');   // or 'upc' if that's what you send
+
+                                var tableBody = $('#newtable');
+                                tableBody.empty();   // clear old rows
+
+                                if (upcDataString) {
+                                    let rowIndex = 1;
+
+                                    // Parse JSON: { "red-cross": [...], "green-tick": [...] }
+                                    const upcByButton = JSON.parse(upcDataString);
+
+                                    Object.keys(upcByButton).forEach(buttonName => {
+
+                                        const items = upcByButton[buttonName] || [];
+
+                                        // ---------- ADD BUTTON HEADING ROW ----------
+                                        var headerRow = `
+                                            <tr class="group-header">
+                                                <td colspan="5" style="background:#f1f1f1; font-weight:bold; font-size:18px;">
+                                                    ${buttonName.toUpperCase()} - UPC
+                                                </td>
+                                            </tr>
+                                        `;
+                                        tableBody.append(headerRow);
+
+                                        // ---------- ADD UPC ROWS ----------
+                                        items.forEach(item => {
+                                            var newRow = $('<tr>');
+
+                                            newRow.append('<td>' + (rowIndex++) + '</td>');
+                                            newRow.append('<td>' + (item["UPC"] || '') + '</td>');
+                                            newRow.append('<td>' + (item["Product ID"] || '') + '</td>');
+                                            newRow.append('<td>' + (item["Product Name"] || '') + '</td>');
+                                            newRow.append('<td>' + (item["tick"] || '') + '</td>');
+
+                                            tableBody.append(newRow);
+                                        });
+                                    });
+                                }
+
+                                // Show/hide card
+                                if ($('#newtable tr').length > 0) {
+                                    $('#tablecard').show();
+                                } else {
+                                    $('#tablecard').hide();
+                                }
+
+                                // Initialize DataTable (destroy if already initialized)
+                                if ($.fn.DataTable.isDataTable('#my_table1')) {
+                                    $('#my_table1').DataTable().destroy();
+                                }
+                                $('#my_table1').DataTable({
+                                    pageLength: 5
+                                });
+
+                            } else {
+                                // 🔹 keep your existing /get_productioned_upc code here
+                                var unique_id = $('#unique_id').val();
+
+                                var formData = new FormData();
+                                formData.append('production_id', parseInt(unique_id));
+                                formData.append('process', 'audit');
+                                var urls = baseurl + '/get_productioned_upc'
+                                $.ajax({
+                                    url: urls,
+                                    type: 'POST',
+                                    processData: false,
+                                    contentType: false,
+                                    data: formData,
+                                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                                    success: function (response) {
+                                        var tableBody = $('#my_table1 tbody'); 
+                                        tableBody.empty();
+                                        response.forEach(function (row, index) {
+                                            var newRow = $('<tr>');
+                                            newRow.append('<td>' + (index + 1) + '</td>');
+                                            newRow.append('<td>' + row['product_upc'] + '</td>'); 
+                                            newRow.append('<td>' + row['product_id'] + '</td>'); 
+                                            newRow.append('<td>' + row['product_name'] + '</td>'); 
+                                            newRow.append('<td>' + row['UPC_Selection'] + '</td>'); 
+                                            tableBody.append(newRow);
+                                        });
+
+                                        if ($('#newtable tr').length > 0) {
+                                            $('#tablecard').show();
+                                        } else {
+                                            $('#tablecard').hide();
+                                        }
+
+                                        if ($.fn.DataTable.isDataTable('#my_table1')) {
+                                            $('#my_table1').DataTable().destroy();
+                                        }
+                                        $('#my_table1').DataTable({
+                                            pageLength: 5
+                                        });
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.error('Error:', error);
+                                    }
+                                });
+                            }
+
+                        } else {
+                            console.log('Invalid or empty response');
+                        }
+                    },
+
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                        $('#loaderModal').hide(); 
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <!-- <div id="navbarPlaceholder"></div> -->
+        <div id="navbar-container"></div>
+        
+
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_settings-panel.html -->
+            <!-- <div id="topbar"></div> -->
+            <div id="sidbar-container"></div>
+
+
+
+            <!-- partial -->
+            <!-- <div id="menubar"></div> -->
+            
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="card">
+                        <div id="loaderModal" class="modal">
+                            <div class="modal-content">
+                                <div class="loader"></div>
+                                <p>Loading...</p>
+                            </div>
+                        </div>
+                        <div class="record_status" style="display: none;">
+                            <h4 class="mt-5">No Record Found</h4>
+                        </div>
+                        <style>
+                            .record_status {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+
+                                text-align: center;
+                            }
+                        </style>
+                        <div class="overall_div" style="display: none;">
+                            <div class="card-header row">
+                                <!-- <div class="col-4">
+                                    <h5 class="card-title">Audit: <span id="comtext"
+                                            style="color: rgb(44, 26, 201); font-size: 20px;">
+                                            -/- </span></h5>
+                                </div> -->
+                                <div class="col-4">
+                                    <h5 class="card-title">
+                                        Audit: 
+                                        <span id="comtext" style="color: rgb(44, 26, 201); font-size: 20px;">-/-</span>
+                                        &nbsp;|&nbsp; <!-- just a separator -->
+                                        Skipped: 
+                                        <span id="count" style="color: rgb(200, 44, 44); font-size: 20px;">0</span>
+                                    </h5>
+                                </div>
+                                <div class="col-6">
+                                    <div class="" id="tickContent" style="display: none;">
+                                        <!-- This <p> tag will be filled dynamically -->
+                                        <p></p>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+
+                                    <script src="../../js/url.js">
+
+                                    </script>
+                                    <script>
+                                        var dynamicpdf = "";
+                                        $(document).ready(function () {
+                                            $('#loaderModal').show(); // Show the loader modal
+
+                                            var userid = localStorage.getItem('id');
+                                            console.log(userid + "userid");
+                                            var url = baseurl + '/get_audit_qa';
+                                            var formData = new FormData();
+                                            formData.append('emp_id', userid);
+
+                                            $.ajax({
+                                                url: url,
+                                                type: 'POST',
+                                                processData: false,
+                                                contentType: false,
+                                                data: formData,
+                                                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                                                success: function (response) {
+                                                    $('#loaderModal').hide(); 
+
+                                                    if (response && response.length > 0) {
+                                                        $('.record_status').hide();
+                                                        $('.overall_div').show();
+                                                        var cycleName = response[0].cycle_name;
+                                                        // var storenumber = response[0].store_number;
+                                                        // var department_name = response[0].department_name;
+                                                        // var planogram_type = response[0].planogram_type;
+                                                        // var planogram_name = response[0].planogram_name;
+                                                        // var total_no_of_sku = response[0].total_no_of_sku;
+
+
+                                                        var storenumber = response[0].sheet['4 - Digit Store Number'];
+                                                        var eight_digit_store_number = response[0].sheet['Store Number'];
+                                                        var department_name = response[0].sheet['Department Name'];
+                                                        var planogram_type = response[0].sheet['Planogram Type'];
+                                                        var planogram_name = response[0].sheet['Planogram Name'];
+                                                        var total_no_of_sku = response[0].sheet['No. of SKUs'];
+
+
+                                                        var pdfPath = response[0].pdf_path_name[0];
+                                                        var dynamicUrl = baseurl + '/' + pdfPath;
+                                                        url = dynamicUrl;
+                                                        dynamicpdf = dynamicUrl;
+                                                        $('#storenumber').val(storenumber);
+                                                        $('#departmentname').val(department_name);
+                                                        $('#departmenttype').val(planogram_type);
+                                                        $('#planogramname').val(planogram_name);
+                                                        $('#total_no_of_skus').val(total_no_of_sku);
+                                                    } else {
+                                                        $('.record_status').show();
+                                                        $('.overall_div').hide()
+                                                        console.log('Invalid or empty response');
+                                                    }
+                                                },
+                                                error: function (xhr, status, error) {
+                                                    console.error('Error:', error);
+                                                    $('#loaderModal').hide(); 
+                                                }
+                                            });
+                                        });
+                                    </script>
+
+
+                                    <!-- {% if planogrampdf or storeimg %} -->
+                                    <button class="btn btn-sm btn-warning float-end" id="opentabaudit"
+                                        onclick="opentab()">View planogram
+                                        PDF
+                                        & Image</button>
+                                    <!-- {% endif %} -->
+                                </div>
+                            </div>
+                            <!-- {% if trackingdata %} -->
+                            <div class="card-body">
+                                <!-- <form method="POST" id="prodform">
+                                {% csrf_token %} -->
+                                <style>
+                                    /* Style the loader modal */
+                                    .modal {
+                                        display: none;
+                                        /* Hide the modal by default */
+                                        position: fixed;
+                                        z-index: 999;
+                                        /* Ensure it appears on top of other elements */
+                                        left: 0;
+                                        top: 0;
+                                        width: 100%;
+                                        height: 100%;
+                                        overflow: auto;
+                                        background-color: rgba(0, 0, 0, 0.5);
+                                        /* Semi-transparent background */
+                                    }
+
+                                    /* Center the loader content */
+                                    .modal-content {
+                                        display: flex;
+                                        flex-direction: column;
+                                        align-items: center;
+                                        justify-content: center;
+                                        height: 100%;
+                                    }
+
+                                    /* Loader animation */
+                                    .loader {
+                                        border: 8px solid #f3f3f3;
+                                        border-radius: 50%;
+                                        border-top: 8px solid #3498db;
+                                        width: 50px;
+                                        height: 50px;
+                                        animation: spin 2s linear infinite;
+                                    }
+
+                                    @keyframes spin {
+                                        0% {
+                                            transform: rotate(0deg);
+                                        }
+
+                                        100% {
+                                            transform: rotate(360deg);
+                                        }
+                                    }
+                                </style>
+                                <div class="card">
+                                    <div class="card-header w-80" style="background-color: #007BFF; color: white; padding: 10px; font-weight: bold;">
+                                        Input
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+
+                                            <div class="col-md-2">
+                                                <label for="cycle">Cycle</label>
+                                                <input type="hidden" name="unique_id" id="unique_id">
+                                                <input type="text" class="form-control" name="cycle" id="cycle" value="--"
+                                                    disabled>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label for="storenumber">Store Number</label>
+                                                <input type="hidden" value="" name="idval" id="idval">
+                                                <input type="text" class="form-control" name="storenumber" id="storenumber"
+                                                    value="--" disabled>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label for="8digit_store_number">4 - Digit Store Number</label>
+                                                <input type="text" class="form-control" name="8digit_store_number"
+                                                    id="8digit_store_number" value="--" disabled>
+
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label for="departmentname">Department Name</label>
+                                                <input type="text" class="form-control" name="departmentname"
+                                                    id="departmentname" value="--" disabled>
+
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="departmenttype">Planogram Type</label>
+                                                <input type="text" class="form-control" name="departmenttype"
+                                                    id="departmenttype" value="--" disabled>
+
+                                            </div>
+
+                                        </div><br>
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <label for="planogramname">Planogram Name</label>
+                                                <input type="text" class="form-control" name="planogramname" id="planogramname"
+                                                    value="--" disabled>
+
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label for="widthcm">Width (Cm) Name</label>
+                                                <input type="text" class="form-control" name="widthcm" id="widthcm"
+                                                    value="--" disabled>
+
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label for="total_no_of_skus">No. of SKUs</label><br>
+                                                <input type="text" class="form-control" value="--" name="total_no_of_skus"
+                                                    id="total_no_of_skus" disabled>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label for="priority">Priority</label><br>
+                                                <input type="text" class="form-control" value="--" name="priority"
+                                                    id="priority" disabled>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label for="delivery_date">Delivery_Date</label><br>
+                                                <input type="text" class="form-control" value="--" name="delivery_date"
+                                                    id="delivery_date" disabled>
+                                            </div>
+                                            <!-- <div class="col-md-4">
+                                                <label for="workable_non_workable">Workable/Non-Workable</label><br> -->
+                                                <!-- <input type="text" class="form-control" name="workable_non_workable"
+                                        id="workable_non_workable"> -->
+                                                <!-- <select name="workable_non_workable" id="workable_non_workable"
+                                                    class="form-control" required>
+                                                    <option value="">----Select----</option>
+                                                    <option value="Workable">Workable</option>
+                                                    <option value="Non Workable–PDF not available on SSO">Non Workable–PDF not
+                                                        available on SSO
+                                                    </option>
+                                                    <option value="Non Workable–Store not found on SSO">Non Workable–Store not
+                                                        found on SSO
+                                                    </option>
+                                                    <option
+                                                        value="Non Workable–Incorrect POG tagging-(POG has more segments than site)">
+                                                        Non
+                                                        Workable–Incorrect POG tagging-(POG has more segments than site)
+                                                    </option>
+                                                    <option
+                                                        value="Non Workable–Incorrect POG tagging-(Site has more segments than POG)">
+                                                        Non
+                                                        Workable–Incorrect POG tagging-(Site has more segments than POG)
+                                                    </option>
+                                                    <option value="Non Workable–Planograms shelf count/segment size differs">Non
+                                                        Workable–Planograms shelf count/segment size differs</option>
+                                                    <option value="Non Workable-Image not qualified for compliance">Non
+                                                        Workable-Image not
+                                                        qualified for compliance</option>
+                                                    <option value="Non Workable - Store image/Segment image missing">Non
+                                                        Workable - Store
+                                                        image/Segment image missing</option>
+
+                                                </select>
+                                            </div> -->
+                                        </div><br>
+                                        <div class="row" id="d_first_row">
+                                            <div class="col-12">
+                                                
+                                                <br>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <br>
+                                        <!-- Equipment Verification Section -->
+                                        <div class="row" id="d_second_row">
+                                            <div class="col-12">
+                                                
+                                                <br>
+                                            </div>
+                                        </div>
+                                        <div class="row" id="d_third_row">
+                                            <div class="col-12">
+                                                
+                                                <br>
+                                            </div>
+                                        </div>
+                                        <div class="row" id="d_four_row">
+                                            <div class="col-12">
+                                                
+                                                <br>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row" id="first-row">
+                                        </div>
+                                        <br>
+                                        <div class="row" id="second-row">
+                                        </div>
+                                        <br>
+                                        <div class="row">
+                                            <!-- <div class="col-md-4">
+                                                <label for="">Remarks</label>
+                                                <input type="text" class="form-control" name="Remarks" id="Remarks" required>
+                                            </div> -->
+                                    <div class="col-md-4 mt-4">
+                                        <button class="btn btn-primary" style="margin-top: 5px; display: none;"
+                                            id="open_pdated_pdf" onclick="openPDF()">Open
+                                            Updated PDF</button>
+                                        <!-- <div class="prod_file">
+                                        <label for="">Production File</label><br>
+                                        <input type="file" accept=".pdf" class="form-control" name="production_pdf"
+                                            id="production_pdf" required>
+                                    </div> -->
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-6 text-center">
+
+
+                                    </div>
+                                    <input type="hidden" name="key" id="key">
+                                    <div class="col-md-4 text-end">
+                                        <h5 id="available_checking_text" style="color:red;"></h5>
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <button class="btn btn-sm btn-info" id="skipdata">Skip</button>
+                                        <button class="btn btn-sm btn-primary"
+                                            id="submit_missing_upc_data">Submit</button>
+                                    </div>
+                                </div>
+                                <!-- </form> -->
+                            </div>
+                        </div>
+                        <br>
+                        <div class="card" id="tablecard" style="display: none;">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered"
+                                        style="table-layout: auto; width: 100%; text-align: center;" id="my_table1">
+                                        <thead style="text-align: center;">
+                                            <tr>
+                                                <th>S.no</th>
+                                                <th>UPC</th>
+                                                <th>Product ID</th>
+                                                <th>Product Name </th>
+                                                <th>UPC Selection</th>
+                                                <!-- <th>Distributor</th> -->
+                                            </tr>
+                                        </thead>
+                                        <tbody id="newtable">
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="card-footer text-center">
+                            <p class="mt-3">No Recordes.</p>
+                        </div> -->
+
+                        <br>
+
+                        <div class="container" id="flotwindow" hidden>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <script src="../../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+        <script src="../../vendors/datatables.net/jquery.dataTables.js"></script>
+        <script src="../../js/dataTables.select.min.js"></script>
+        <!-- <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css"> -->
+
+
+
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        var title = 'Production';
+        $('#HEADED').text(title)
+    </script>
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script>
+
+    
+
+
+    $(document).ready(function () {
+
+        loadNavbar();
+        loadsidbar();
+
+    });
+        
+
+</script>
+
+    <script>
+        function updateDynamicCounts() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const allCountsString = urlParams.get('allCounts');
+
+            if (allCountsString) {
+                try {
+                    const allCounts = JSON.parse(decodeURIComponent(allCountsString));
+                    const tickContentDiv = $('#tickContent');
+                    const pTag = tickContentDiv.find('p');
+                    pTag.empty(); 
+
+                    let hasCountsToShow = false;
+
+                    const crossAnnotations = allCounts.filter(item => item.shape && item.shape.toLowerCase() === 'cross');
+
+                    allCounts.forEach((item, index) => {
+                        const labelSpan = $('<span>').text(`${item.label}: `).css({ 'color': item.color, 'font-weight': 'bold' });
+                        const countSpan = $('<span>').text(item.count).css({ 'color': item.color, 'font-weight': 'bold' });
+
+                        pTag.append(labelSpan).append(countSpan);
+
+                        if (index < allCounts.length - 1) {
+                            pTag.append(', ');
+                        }
+
+                        if (item.count > 0) {
+                            hasCountsToShow = true;
+                        }
+                    });
+
+                    if (hasCountsToShow) {
+                        tickContentDiv.show();
+                    }
+
+                    if (crossAnnotations.length > 0) {
+                        $('#incorrectly_placed_skus').val(crossAnnotations[0].count || 0);
+                    }
+                    if (crossAnnotations.length > 1) {
+                        $('#no_of_missing_skus').val(crossAnnotations[1].count || 0);
+                    }
+
+                } catch (e) {
+                    console.error("Error processing dynamic count data from URL:", e);
+                }
+            }
+        }
+
+        $(document).ready(function () {
+            updateDynamicCounts();
+
+            $('#workable_non_workable').on('change', function () {
+                var selectedValue = $(this).val();
+                $('#first-row').empty();
+                if (selectedValue == "Non Workable - Store image/Segment image missing") {
+                    $('#first-row').empty();
+                    $('#second-row').empty();
+                    $('.prod_file').hide();
+                    $('#production_pdf').removeAttr('required');
+                } else if (selectedValue == "Workable") {
+                    $('#first-row').append("<div class='col-md-4'>" +
+                        "<label for='Image_Qualified_for_Compliance'>Image Qualified for Compliance</label><br>" +
+                        "<select name='Image_Qualified_for_Compliance' id='Image_Qualified_for_Compliance' " +
+                        "style='border: 1px solid black; color: black;' class='form-control select-form' required>" +
+                        "<option value=''>-- Select --</option>" +
+                        "<option value='Qualified'>Qualified</option>" +
+                        "<option value='Not Qualified - Image is blur/pixelated'>Not Qualified - Image is blur/pixelated</option>" +
+                        "<option value='Not Qualified - Image has glare'>Not Qualified - Image has glare</option>" +
+                        "<option value='Not Qualified - Image cut on the sides'>" +
+                        "Not Qualified - Image cut on the sides</option>" +
+                        "<option value='Not Qualified - Image has an obstruction - Image has glare'>Not Qualified - Image has an obstruction - Image has glare</option>" +
+                        "<option value='Not Qualified - Image is dark'>Not Qualified - Image is dark</option>" +
+                        "</select>" +
+                        "</div>" +
+                        "<div class='col-md-4'>" +
+                        "<label for=''>No. of Missing SKUs</label><br>" +
+                        "<input type='text' class='form-control' name='no_of_missing_skus' id='no_of_missing_skus' disabled required>" +
+                        "</div>" +
+                        "<div class='col-md-4'>" +
+                        "<label for=''>Incorrectly placed SKUs</label><br>" +
+                        "<input type='text' class='form-control' name='incorrectly_placed_skus' " +
+                        "id='incorrectly_placed_skus' disabled required>" +
+                        "</div>");
+                    $('.prod_file').show();
+                    updateDynamicCounts();
+                } else {
+                    $('#first-row').append('<div class="col-md-3">' +
+                        '<label for="">Image Qualified for Compliance</label><br>' +
+                        "<select name='Image_Qualified_for_Compliance' id='Image_Qualified_for_Compliance' " +
+                        "style='border: 1px solid black; color: black;' class='form-control select-form' required>" +
+                        "<option value=''>-- Select --</option>" +
+                        "<option value='Qualified'>Qualified</option>" +
+                        "<option value='Not Qualified - Image is blur/pixelated'>Not Qualified - Image is blur/pixelated</option>" +
+                        "<option value='Not Qualified - Image has glare'>Not Qualified - Image has glare</option>" +
+                        "<option value='Not Qualified - Image cut on the sides'>" +
+                        "Not Qualified - Image cut on the sides</option>" +
+                        "<option value='Not Qualified - Image has an obstruction - Image has glare'>Not Qualified - Image has an obstruction - Image has glare</option>" +
+                        "<option value='Not Qualified - Image is dark'>Not Qualified - Image is dark</option>" +
+                        "</select></div>" +
+                        '<div class="col-md-3">' +
+                        '<label for="">No. of Bays</label><br>' +
+                        '<input type="text" class="form-control" name="No_of_Bays" id="No_of_Bays" required> ' +
+                        '</div>' +
+                        '<div class="col-md-3">' +
+                        '<label for="">No. of Shelves</label><br>' +
+                        '<input type="text" class="form-control" name="No_of_Shelves" id="No_of_Shelves" required> ' +
+                        '</div>' +
+                        '<div class="col-md-3">' +
+                        '<label for="">Size of Bays</label><br>' +
+                        '<input type="text" class="form-control" name="Size_of_Bays" id="Size_of_Bays" required>' +
+                        '</div>');
+
+                    $('.prod_file').hide();
+                    $('#production_pdf').removeAttr('required');
+                      }
+            });
+        });
+    </script>
+
+    <script>
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            var defaultImage = document.querySelector('.column img');
+            if (defaultImage) {
+                myFunction(defaultImage);
+            }
+        });
+
+    </script>
+    <script src="../../js/url.js"></script>
+    <script>
+        function opentab() {
+            var dynamicpdf = "";
+            $(document).ready(function () {
+                $('#loaderModal').show(); 
+                var userid = localStorage.getItem('id');
+                var url = baseurl + '/get_audit_qa'; 
+                var formData = new FormData();
+                formData.append('emp_id', userid);
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                    success: function (response) {
+                        $('#loaderModal').hide();
+                        if (response && response.length > 0) {
+                            var responseData = response[0];
+
+                            var production_id = responseData.unique_id;
+                            var eight_digit_store_number = responseData.eight_digit_store_number;
+                            var pdfPath = responseData.pdf_path_name[0];
+                            var imagePaths = responseData.image_path_name;
+                            var duplicateData = responseData.duplicate || [];
+                            var annotationData = responseData.annotation || {}; 
+                            var upcData = responseData.upc || {};
+
+
+                            var encodedPdfPath = encodeURIComponent(pdfPath);
+                            var dynamicpdf = baseurl + '/' + encodedPdfPath;
+                            var encodedImagePaths = imagePaths.map(path => encodeURIComponent(path));
+                            var available_checking_text = $('#available_checking_text').text();
+                            var upcParam = '&upc=' + encodeURIComponent(JSON.stringify(upcData));
+
+                            var duplicateParam = '';
+                            if (duplicateData.length > 1) {
+                                duplicateParam = '&duplicates=' + encodeURIComponent(JSON.stringify(duplicateData));
+                            }
+
+                            var annotationParam = '&annotations=' + encodeURIComponent(JSON.stringify(annotationData));
+
+                            var finalUrl = window.location.origin + '/pages/page/audit_pdf_loader.html?q=' + dynamicpdf +
+                                '&image=' + encodedImagePaths +
+                                '&production_id=' + production_id +
+                                '&available_checking_text=' + available_checking_text +
+                                '&eight_digit_store_number=' + eight_digit_store_number +
+                                duplicateParam +
+                                annotationParam +
+                                upcParam;
+
+
+                            var newTab = window.open(finalUrl, '_blank');
+
+                        } else {
+                            console.log('Invalid or empty response from /get_audit_qa');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching data from /get_audit_qa:', error);
+                        $('#loaderModal').hide();
+                    }
+                });
+            });
+        }
+    </script>
+
+    <script>
+        function openPDF() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const qValue = urlParams.get('desiredPath');
+
+            console.log(qValue);
+
+            const withoutExtension = qValue.replace('upload_pdf', 'pdf');
+            const withoutExtension1 = withoutExtension.replace('.pdf', '');
+            var currentURL = window.location.href;
+            var eight_digit_store_number = $("#8digit_store_number").val();
+
+            var hostname = new URL(currentURL).hostname;
+
+            // const newPath =  window.location.origin + '/' + withoutExtension1 + '_' + eight_digit_store_number + '_audit.pdf';
+            const newPath = baseurl + "/"  + withoutExtension1 + '_' + 'audit' + '_output.pdf';
+            console.log(newPath)
+            window.open(newPath, '_blank');
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#submit_missing_upc_data').click(function () {
+                var adc = [];
+                var dataToSend = {};
+
+
+                if (selected_planogram == true) {
+
+                    var Missing_skus_without_oos = document.getElementById('d_missing_skus_without_oos').value;
+                    var Incorrectly_placed_skus = document.getElementById('d_incorrectly_placed_skus').value;
+                    var Missing_price_card = document.getElementById('d_missing_price_card').value;
+                    var Planogram_status = document.getElementById('d_planogram_status').value;
+                    var Pog_image_status = document.getElementById('d_pog_image_status').value;
+                    var Review_status = document.getElementById('d_review_status').value;
+                    var Nooferror = document.getElementById('d_nooferror').value;
+                    var Errordescription = document.getElementById('d_errordes').value;
+
+
+                    // var Remarks = document.getElementById('d_remarks').value;
+                    // var completed_date = document.getElementById('d_completed_date').value;
+                    // var Allocation = document.getElementById('d_allocation_date').value;
+                    
+                    dataToSend['Missing_Skus Without OOS'] = Missing_skus_without_oos,
+                    dataToSend['Incorrectly_Placed_Skus'] = Incorrectly_placed_skus,
+                    dataToSend['Missing_Price_Card'] = Missing_price_card,
+                    dataToSend['Planogram_Status'] = Planogram_status,
+                    dataToSend['POG_Image_Status'] = Pog_image_status,
+                    dataToSend['Review_Status'] = Review_status,
+                    dataToSend['No Of Error'] = Nooferror,
+                    dataToSend['Error Description'] = Errordescription
+
+
+                    // dataToSend['Remarks'] = Remarks
+                    // dataToSend.completed_date = completed_date
+                    // dataToSend.Allocation = Allocation
+                  
+                }else{
+
+                    dataToSend['Missing_Skus Without OOS'] = '',
+                    dataToSend['Incorrectly_Placed_Skus'] = '',
+                    dataToSend['Missing_Price_Card'] = '',
+                    dataToSend['Planogram_Status'] = '',
+                    dataToSend['POG_Image_Status'] = '',
+                    dataToSend['Review_Status'] = '',
+                    dataToSend['No Of Error'] = '',
+                    dataToSend['Error Description'] = ''
+
+                }
+
+                if (selected_equipment_complince == true) {
+
+                    var Complaint_noncomplaint = document.getElementById('d_compliant_noncompliant').value;
+                    var No_of_bays_in_pdf = document.getElementById('d_no_of_bays_in_pdf').value;
+                    var No_of_bays_per_images = document.getElementById('d_no_of_bays_in_images').value;
+                    var Width_of_pog_in_pdf = document.getElementById('width_of_pog_pdf').value;
+                    var Width_of_bays_per_image = document.getElementById('width_of_pog_image').value;
+                    var No_of_shelves_in_pdf = document.getElementById('d_shelves_pdf').value;
+                    var No_of_shelves_per_images = document.getElementById('d_shelves_image').value;
+                    var Total_shelves_in_pdf = document.getElementById('d_totalshelves_pdf').value;
+                    var Total_shelves_in_images = document.getElementById('d_totalshelves_image').value;
+                    var shelf_segment_sizw_discrepency = document.getElementById('d_size_dis').value;
+                    var Remarks_eq = document.getElementById('d_remarks_en').value;
+                    var Nooferror_eq = document.getElementById('d_nooferror_eq').value;
+                    var Errordescription_eq = document.getElementById('d_errordes_eq').value;
+
+
+                    dataToSend['Compliant/Non-Compliant'] = Complaint_noncomplaint
+                    dataToSend['No. Of Bays In Pdf'] = No_of_bays_in_pdf
+                    dataToSend['No. Of Bays Per Images'] = No_of_bays_per_images
+                    dataToSend['Width Of POG In Pdf'] = Width_of_pog_in_pdf
+                    dataToSend['Width Of Bays Per Image'] = Width_of_bays_per_image
+                    dataToSend['No. Of Shelves In Pdf Eg. (4+4+4)'] = No_of_shelves_in_pdf
+                    dataToSend['No. Of Shelves Per Image Eg. (4+4+4)'] = No_of_shelves_per_images
+                    dataToSend['Total Shelves In Pdf'] = Total_shelves_in_pdf
+                    dataToSend['Total Shelves Per Image'] = Total_shelves_in_images
+                    dataToSend['Shelf/Segment Size Discrepency(Yes/No)'] = shelf_segment_sizw_discrepency
+                    dataToSend['No Of Error'] = Nooferror_eq,
+                    dataToSend['Error Description'] = Errordescription_eq
+                    // dataToSend['Remarks'] = Remarks_eq
+                }else{
+                    
+                    dataToSend['Compliant/Non-Compliant'] = ''
+                    dataToSend['No. Of Bays In Pdf'] = ''
+                    dataToSend['No. Of Bays Per Images'] = ''
+                    dataToSend['Width Of POG In Pdf'] = ''
+                    dataToSend['Width Of Bays Per Image'] = ''
+                    dataToSend['No. Of Shelves In Pdf Eg. (4+4+4)'] = ''
+                    dataToSend['No. Of Shelves Per Image Eg. (4+4+4)'] = ''
+                    dataToSend['Total Shelves In Pdf'] = ''
+                    dataToSend['Total Shelves Per Image'] = ''
+                    dataToSend['Shelf/Segment Size Discrepency(Yes/No)'] = ''
+                    dataToSend['No Of Error'] = '',
+                    dataToSend['Error Description'] = ''
+                    // dataToSend.Remarks_eq = ''
+                }
+
+                // if (selected_out_of_stock == true) {
+
+                //     var No_of_missing_sku_without_oos = document.getElementById('d_no_of_missing_skus_without_oos').value;
+                //     var No_of_misplaced_skus = document.getElementById('d_no_of_misplaced_skus').value;
+                //     var Missed_price_card = document.getElementById('d_oss_missing_price_card').value;
+                //     var No_of_error = document.getElementById('no_of_error').value;
+                //     var Error_description = document.getElementById('error_description').value;
+                //     var Audited_by = document.getElementById('audit_by').value;
+                //     var Audit_date = document.getElementById('audit_date').value;
+
+                //     var No_of_missing_sku_without_oos_re = document.getElementById('d_no_of_missing_skus_without_oos1').value;
+                //     var No_of_misplaced_skus_re = document.getElementById('d_no_of_misplaced_skus1').value;
+                //     var Missed_price_card_re = document.getElementById('d_oss_missing_price_card1').value;
+                //     var No_of_error_re = document.getElementById('no_of_error1').value;
+                //     var Error_description_re = document.getElementById('error_description1').value;
+                //     var Audited_by_re = document.getElementById('audit_by1').value;
+                //     var Audit_date_re = document.getElementById('audit_date1').value;
+
+                //     dataToSend.No_of_missing_sku_without_oos = No_of_missing_sku_without_oos
+                //     dataToSend.No_of_misplaced_skus = No_of_misplaced_skus
+                //     dataToSend.Missed_price_card = Missed_price_card
+                //     dataToSend.No_of_error = No_of_error
+                //     dataToSend.Error_description = Error_description
+                //     dataToSend.Audited_by = Audited_by
+                //     dataToSend.Audit_date = Audit_date
+
+                //     dataToSend.No_of_missing_sku_without_oos_re = No_of_missing_sku_without_oos_re
+                //     dataToSend.No_of_misplaced_skus_re = No_of_misplaced_skus_re
+                //     dataToSend.Missed_price_card_re = Missed_price_card_re
+                //     dataToSend.No_of_error_re = No_of_error_re
+                //     dataToSend.Error_description_re = Error_description_re
+                //     dataToSend.Audited_by_re = Audited_by_re
+                //     dataToSend.Audit_date_re = Audit_date_re
+                // }else{
+
+                //     dataToSend.No_of_missing_sku_without_oos = ''
+                //     dataToSend.No_of_misplaced_skus = ''
+                //     dataToSend.Missed_price_card = ''
+                //     dataToSend.No_of_error = ''
+                //     dataToSend.Error_description = ''
+                //     dataToSend.Audited_by = ''
+                //     dataToSend.Audit_date = ''
+
+                //     dataToSend.No_of_missing_sku_without_oos_re = ''
+                //     dataToSend.No_of_misplaced_skus_re = ''
+                //     dataToSend.Missed_price_card_re = ''
+                //     dataToSend.No_of_error_re = ''
+                //     dataToSend.Error_description_re = ''
+                //     dataToSend.Audited_by_re = ''
+                //     dataToSend.Audit_date_re = ''
+                // }
+
+                if (selected_recheck == true) {
+
+                    var Recheck_missing_skus_score = document.getElementById('d_recheck_missing_skus_score').value;
+                    var Recheck_incorrectly_placed_skus_score = document.getElementById('d_recheck_incorrect_placed_skus_score').value;
+                    var Recheck_missing_price_card_score = document.getElementById('d_recheck_missing_price_card_score').value;
+                    var Recheck_planogram_status = document.getElementById('d_recheck_planogram_status').value;
+                    var Recheck_pog_image_status = document.getElementById('d_recheck_pog_image_status').value;
+                    var Recheck_review_status = document.getElementById('d_recheck_review_status').value;
+                    var Recheck_remarks = document.getElementById('recheck_remarks').value;
+                    var Recheck_completed_date = document.getElementById('recheck_completed_date').value;
+                    var Recheck_allocation = document.getElementById('d_recheck_allocation').value;
+                    var Nooferror_re = document.getElementById('d_nooferror_eq').value;
+                    var Errordescription_re = document.getElementById('d_errordes_eq').value;
+
+
+                    
+                    dataToSend['Recheck_Missing_Skus_Score'] = Recheck_missing_skus_score
+                    dataToSend['Recheck_Incorrectly_Placed_Skus_Score'] = Recheck_incorrectly_placed_skus_score
+                    dataToSend['Recheck_Missing_Price_Card_Score'] = Recheck_missing_price_card_score
+                    dataToSend['Recheck_Planogram_Status'] = Recheck_planogram_status
+                    dataToSend['Recheck_POG_Image_Status'] = Recheck_pog_image_status
+                    dataToSend['Re_Check_Review_Status'] = Recheck_review_status
+                    dataToSend['Recheck_Remarks'] = Recheck_remarks
+
+                    dataToSend['Recheck_Completed_Date'] = Recheck_completed_date
+                    dataToSend['Recheck_Allocation'] = Recheck_allocation
+
+                    dataToSend['No Of Error'] = Nooferror_eq
+                    dataToSend['Error Description'] = Errordescription_eq
+                    // dataToSend.Recheck_missing_skus_score = Recheck_missing_skus_score
+                    // dataToSend.Recheck_incorrectly_placed_skus_score = Recheck_incorrectly_placed_skus_score
+                    // dataToSend.Recheck_missing_price_card_score = Recheck_missing_price_card_score
+                    // dataToSend.Recheck_planogram_status = Recheck_planogram_status
+                    // dataToSend.Recheck_pog_image_status = Recheck_pog_image_status
+                    // dataToSend.Recheck_review_status = Recheck_review_status
+                    // dataToSend.Recheck_remarks = Recheck_remarks
+                    // dataToSend.Recheck_completed_date = Recheck_completed_date
+                    // dataToSend.Recheck_allocation = Recheck_allocation
+
+                }else{
+                    
+                    dataToSend['Recheck_Missing_Skus_Score'] = ''
+                    dataToSend['Recheck_Incorrectly_Placed_Skus_Score'] = ''
+                    dataToSend['Recheck_Missing_Price_Card_Score'] = ''
+                    dataToSend['Recheck_Planogram_Status'] = ''
+                    dataToSend['Recheck_POG_Image_Status'] = ''
+                    dataToSend['Re_Check_Review_Status'] = ''
+                    dataToSend['Recheck_Remarks'] = ''
+
+                    dataToSend['Recheck_Completed_Date'] = ''
+                    dataToSend['Recheck_Allocation'] = ''
+
+                    dataToSend['No Of Error'] = ''
+                    dataToSend['Error Description'] = ''
+
+                }
+
+
+                adc.push(dataToSend);
+
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+
+                var formData = new FormData();
+                var unique_id = $('#unique_id').val();
+                formData.append('production_id', parseInt(unique_id));
+                formData.append('production_res', JSON.stringify(adc));
+                var urls = baseurl + '/single_audit_completed'
+                $.ajax({
+                    url: urls,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                    success: function (response) {
+                        var currentURL = window.location.href;
+
+                        var hostname = new URL(currentURL).hostname;
+                        console.log(hostname)
+                        window.location.href =  window.location.origin + '/pages/page/audit_page.html';
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+            )
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#skipdata').click(function () {
+                var formData = new FormData();
+                var prod_id = $('#unique_id').val()
+                console.log(prod_id)
+                formData.append('production_id', parseInt(prod_id));
+                var urls = baseurl + '/audit_skip'
+                $.ajax({
+                    url: urls,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                    success: function (response) {
+                        var currentURL = window.location.href;
+
+                        var hostname = new URL(currentURL).hostname;
+                        console.log(hostname)
+                        window.location.href =  window.location.origin + '/pages/page/audit_page.html';
+                        // window.location.href = "http://localhost:8000/pages/page/production_page.html";
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+            )
+        });
+    </script>
+
+
+</body>
+    <script src="../../js/template.js"></script>
+
+
+</html>

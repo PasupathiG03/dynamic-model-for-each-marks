@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MNW</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="../../vendors/feather/feather.css">
+    <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="../../vendors/select2/select2.min.css">
+    <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="../../vendors/js/vendor.bundle.base.js"></script>
+    <link rel="shortcut icon" href="../../images/logo/m-favicon.png" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+
+    <style>
+        #loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0%   { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+    </style>
+
+    <!-- endinject -->
+    <!-- <link rel="shortcut icon" href="../../images/logo/m-favicon.png" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+
+</head>
+
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <!-- <div id="navbarPlaceholder"></div> -->
+        <div id="navbar-container"></div>
+
+
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_settings-panel.html -->
+            <!-- <div id="topbar"></div> -->
+            <div id="sidbar-container"></div>
+
+            <!-- partial -->
+            <!-- <div id="menubar"></div> -->
+
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <!-- <form> -->
+                                    <h3 class="text-primary">Report Template Creation</h3>
+                                    <hr>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-4">
+                                            <label for="">Project Name</label>
+                                            <select name="projectname" class="form-control" id="projectname" required>
+                                                <option value="">--Select Project--</option>
+                                            </select>
+                                           </div>
+                                        <div class="col-sm-12 col-md-4">
+                                            <label for="">Cycle Name</label>
+                                            <select name="cyclename" class="form-control" id="cyclename" required>
+                                                <option value="">--Select Cycle--</option>
+                                            </select>
+                                            <br>
+                                        </div>
+
+                                        <div class="col-sm-12 col-md-4">
+                                            <label for="report_type">Report Type</label>
+                                            <input type="text" class="form-control" id="report_type" placeholder="Enter report type" required>
+                                            <div id="addReportNearType" class="mt-2"></div>
+                                        </div>
+
+                                        
+
+
+                                    </div>
+                                    <br>
+                                    <div class="addlabel-here">
+                                            
+                                    </div>
+                                    <div id="reportContainer">
+                                        <div class="addbutton-here">
+
+                                        </div>
+                                    </div>
+                                    
+                                    <br>
+                                    <div class="row">
+                                      
+                                        <div class="d-flex justify-content-start col-md-4">
+                                            <button class="btn btn-primary btn-sm" onclick="submit()"
+                                                id="submitbtn">Submit</button>
+                                            <br>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <br>
+
+                                   
+                                </div>
+                                <br><br>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br>
+                    
+                    <div id="loader" class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <br>
+                </div>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+
+
+</body>
+<script src="../../js/url.js"></script>
+<script src="../../js/auth-setup.js"></script>
+
+
+<style>
+    select[name="my_table1_length"] {
+        height: 30px;
+    }
+
+    .paginate_button {
+        font-size: 12px;
+    }
+    .sortable-placeholder {
+        background: #f0f0f0;
+        border: 2px dashed #ccc;
+        height: 60px;
+        margin-bottom: 10px;
+    }
+
+</style>
+<!-- container-scroller -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- Include Select2 CSS & JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<!-- jQuery UI for drag & drop -->
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+<script src="../../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+<script src="../../vendors/datatables.net/jquery.dataTables.js"></script>
+<script src="../../js/dataTables.select.min.js"></script>
+<link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+
+<!-- <script src="../../vendors/select2/select2.min.js"></script> -->
+<!-- <script src="../../js/off-canvas.js"></script> -->
+<script src="../../js/hoverable-collapse.js"></script>
+<script src="../../js/settings.js"></script>
+<script src="../../js/todolist.js"></script>
+
+
+
+
+
+<script src="../../js/select2.js"></script>
+<script>
+    $(document).ready(function () {
+        
+        loadNavbar();
+        loadsidbar();
+
+    });
+        
+
+</script>
+
+<script>
+    
+    $(document).ready(function () {
+        var url = baseurl + '/get_project';
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                // Empty and add new options
+                $('#projectname').empty().append('<option value="">--Select Project--</option>');
+                $.each(response, function (index, item) {
+                    $('#projectname').append('<option value="' + item.project_id + '">' + item.project_name + '</option>');
+                });
+
+                // Activate Select2 (makes dropdown searchable)
+                $('#projectname').select2({
+                    placeholder: "Select Option",
+                    allowClear: true
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $('#projectname').change(function () {
+            var projectId = $(this).val();
+            populateCycleData(projectId);
+        });
+
+        function populateCycleData(projectId) {
+            var formData = new FormData();
+            formData.append('project_id', projectId);
+
+            var url = baseurl + '/get_cycle';
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                success: function (response) {
+                    console.log(response);
+                    $('#cyclename').empty(); // Clear existing options
+                    $('#cyclename').append('<option value="">--Select Cycle--</option>');
+                    $.each(response, function (index, item) {
+                        $('#cyclename').append('<option value="' + item.cycle_id + '">' + item.cycle_name + '</option>');
+                    });
+                    $('#cyclename').select2({
+                        placeholder: "Select Option",
+                        allowClear: true
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+    });
+
+    $(document).ready(function () {
+        var reportCounter = 0;
+
+        // Show Add button only after project, cycle selected
+        $('#cyclename').change(function () {
+            if ($('#projectname').val() && $('#cyclename').val()) {
+                if ($('#addReportBtn').length === 0) {
+                    $('.addbutton-here').prepend(
+                        '<button id="addReportBtn" class="btn btn-success btn-sm mb-3">+ Add Report</button>'
+                    );
+                }
+            }
+        });
+
+        // When report type changes, load already stored data
+        $('#report_type').change(function () {
+            
+
+            if ($('#projectname').val() && $('#cyclename').val() && $(this).val()) {
+                
+                
+                loadSavedReports($('#projectname').val(), $('#cyclename').val(), $(this).val());
+            }
+        });
+
+        // Add dynamic report row (empty or prefilled)
+        function addReportRow(inputVal = "", sheetVal = "", headerVal = "") {
+            reportCounter++;
+            var showLabels = reportCounter === 1;
+
+            var labels = `
+                <div class="row label-row">
+
+                    <div class="col-1">
+                        ${showLabels ? '' : ''}
+                    </div>
+                    <div class="col-sm-12 col-md-3">
+                        ${showLabels ? '<label>Input Box</label>' : ''}
+                    </div>
+
+                    <div class="col-sm-12 col-md-3">
+                        ${showLabels ? '<label>Select Sheet Type</label>' : ''}
+                    </div>
+
+                    <div class="col-sm-12 col-md-3">
+                        ${showLabels ? '<label>Tracking Sheet Header</label>' : ''}
+                    </div>
+                </div>
+            `
+
+            var newRow = `
+            <div class="row report-row mb-3" data-id="${reportCounter}">
+                <div class="col-sm-12 col-md-1 d-flex align-items-center justify-content-center">
+                    <span class="drag-handle" style="cursor: move; font-size: 20px;">☰</span>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <input type="text" class="form-control input_type" value="${inputVal}" placeholder="Enter input name">
+                </div>
+
+                <div class="col-sm-12 col-md-3">
+                    <select class="form-control sheet_type">
+                        <option value="">--Select Sheet type--</option>
+                        <option value="sheet" ${sheetVal === "sheet" ? "selected" : ""}>Production</option>
+                        <option value="audit_sheet" ${sheetVal === "audit_sheet" ? "selected" : ""}>Audit</option>
+                        <option value="recheck_sheet" ${sheetVal === "recheck_sheet" ? "selected" : ""}>Recheck</option>
+                        <option value="audit_recheck_sheet" ${sheetVal === "audit_recheck_sheet" ? "selected" : ""}>Recheck Audit</option>
+                        <option value="user_work" ${sheetVal === "user_work" ? "selected" : ""}>User Work</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-12 col-md-3">
+                    <select class="form-control tracking_sheet_headers">
+                        <option value="">--Select tracker sheet header--</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-12 col-md-2 d-flex align-items-end">
+                    <button class="btn btn-danger btn-sm removeReportBtn">Remove</button>
+                </div>
+            </div>`;
+
+            $('.addbutton-here').before(newRow);
+            $('.addlabel-here').before(labels);
+
+
+            // Populate the secondary dropdown
+            fetchSecondaryDropdown(reportCounter, sheetVal, headerVal);
+        }
+        $(function () {
+            $("#reportContainer").sortable({
+                items: ".report-row",         // Only .report-row elements are draggable
+                handle: ".drag-handle",       // optional handle for drag
+                placeholder: "sortable-placeholder",
+                tolerance: "pointer",
+                axis: "y"
+            });
+        });
+
+
+        // Add Report button manually
+        $(document).on('click', '#addReportBtn', function () {
+            addReportRow();
+        });
+
+        // Remove dynamic row
+        $(document).on('click', '.removeReportBtn', function () {
+            $(this).closest('.report-row').remove();
+        });
+
+        // Sheet type change event
+        $(document).on('change', '.sheet_type', function () {
+            var $row = $(this).closest('.report-row');
+            fetchSecondaryDropdown($row.data('id'), $(this).val());
+        });
+
+        function fetchSecondaryDropdown(rowId, sheetType, selectedValue = "") {
+            var projectId = $('#projectname').val();
+            var cycleId = $('#cyclename').val();
+            var $row = $(`.report-row[data-id="${rowId}"]`);
+            var $dropdown = $row.find('.tracking_sheet_headers');
+
+            if (sheetType === "user_work") {
+                $dropdown.prev('label').text('Select Status');
+                $dropdown.empty().append('<option value="">--Select Status--</option>');
+
+                const options = [
+                    'picked_status','audit_status','recheck_status','audit_recheck_status',
+                    'recheck','picked_user_id','audit_user_id','recheck_user_id','recheck_audit_user_id',
+                    'open_time','close_time','audit_open_time','audit_close_time',
+                    'recheck_open_time','recheck_close_time','audit_recheck_open_time','audit_recheck_close_time','production_total_time','audit_total_time','recheck_total_time','recheck_audit_total_time'
+                ];
+
+                options.forEach(opt => {
+                    const selected = opt === selectedValue ? "selected" : "";
+
+                    let displayText = opt.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+                    if (opt.startsWith("picked_")) {
+                        displayText = displayText.replace(/^Picked/i, "Production");
+                    }
+
+                    if (opt === "open_time") {
+                        displayText = "Production Open Time";
+                    }
+                    if (opt === "close_time") {
+                        displayText = "Production Close Time";
+                    }
+
+                    $dropdown.append(`<option value="${opt}" ${selected}>${displayText}</option>`);
+                });
+
+            } else {
+                $dropdown.prev('label').text('Tracking Sheet Header');
+                $dropdown.empty().append('<option value="">--Select tracker sheet header--</option>');
+
+                $.ajax({
+                    url: baseurl + '/tracking-sheet/headers',
+                    type: 'GET',
+                    data: { project_id: projectId, cycle_id: cycleId },
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                    success: function(response) {
+                        $.each(response.headers, function(index, header) {
+                            var selected = header === selectedValue ? "selected" : "";
+                            $dropdown.append(`<option value="${header}" ${selected}>${header}</option>`);
+                        });
+                          // Activate Select2 (makes dropdown searchable)
+                        $dropdown.select2({
+                            placeholder: "Select Option",
+                            allowClear: true
+                        });
+
+                    },
+                    error: function(xhr, status, error) { console.error('Error fetching headers:', error); }
+                });
+            }
+        }
+
+        // // Load saved reports
+        // function loadSavedReports(projectId, cycleId, reportType) {
+        //     $.ajax({
+        //         url: baseurl + '/report_structures',
+        //         type: 'GET',
+        //         data: { project_id: projectId, cycle_id: cycleId, report_type: reportType },
+        //         contentType: 'application/json',
+        //         success: function(response) {
+        //             $('.report-row').remove();
+        //             reportCounter = 0;
+
+        //             if (response && response.length > 0) {
+        //                 var savedReport = response[0].report;
+        //                 Object.entries(savedReport).forEach(([inputKey, arrValues]) => {
+        //                     addReportRow(inputKey, arrValues[1], arrValues[2]);
+        //                 });
+        //             }
+        //         },
+        //         error: function (xhr, status, error) {
+        //             console.error('Error loading saved reports:', error);
+        //         }
+        //     });
+        // }
+        function loadSavedReports(projectId, cycleId, reportType) {
+            $.ajax({
+                url: baseurl + '/report_structures',
+                type: 'GET',
+                data: { project_id: projectId, cycle_id: cycleId, report_type: reportType },
+                contentType: 'application/json',
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                success: function(response) {
+                    $('.label-row').remove();
+                    $('.report-row').remove();
+        
+                    reportCounter = 0;
+                    $("#addReportNearType").empty(); // clear any previous button
+
+                    if (response && response.length > 0) {
+                        // no data found → show Add Report button near Report Type
+                        $("#addReportNearType").html(`
+                            <button id="addReportBtnNearType" class="btn btn-success btn-sm">ALL</button>
+                        `);
+                        var savedReport = response[0].report;
+
+                        // Convert object to array of [key, value] pairs and sort by index (first element)
+                        var sortedEntries = Object.entries(savedReport).sort((a, b) => a[1][0] - b[1][0]);
+
+                        sortedEntries.forEach(([inputKey, arrValues]) => {
+                            // arrValues = [index, sheetType, trackingHeader]
+                            addReportRow(inputKey, arrValues[1], arrValues[2]);
+                        });
+                    }else{
+                        $('.label-row').remove();
+                        $('.report-row').remove();
+                        $("#addReportNearType").empty(); // clear any previous button
+                        // no data found → show Add Report button near Report Type
+                        $("#addReportNearType").html(`
+                            <button id="addReportBtnNearType" class="btn btn-success btn-sm">ALL</button>
+                        `);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error loading saved reports:', error);
+                }
+            });
+        }
+
+        // // Handle Add Report button near report type
+        // $(document).on('click', '#addReportBtnNearType', function () {
+        //     const projectId = $('#projectname').val();
+        //     const cycleId = $('#cyclename').val();
+
+        //     if (!projectId || !cycleId) {
+        //         Swal.fire({
+        //             icon: 'warning',
+        //             title: 'Missing Fields',
+        //             text: 'Please select project and cycle first!'
+        //         });
+        //         return;
+        //     }
+
+        //     const loader = $("#loader");
+        //     loader.show();
+
+        //     // Clear previous rows before generating new ones
+        //     $('.report-row').remove();
+        //     reportCounter = 0;
+
+        //     // 🔹 Step 1: Get dynamic sheet type values directly from dropdown template
+        //     const $tempDropdown = $('<select class="form-control sheet_type">' +
+        //         '<option value="">--Select Sheet type--</option>' +
+        //         '<option value="sheet">Production</option>' +
+        //         '<option value="audit_sheet">Audit</option>' +
+        //         '<option value="recheck_sheet">Recheck</option>' +
+        //         '<option value="audit_recheck_sheet">Recheck Audit</option>' +
+        //         '<option value="user_work">User Work</option>' +
+        //     '</select>');
+
+        //     // Instead of hardcoding, if your real dropdowns might change later,
+        //     // grab dynamically from any existing .sheet_type dropdown if present
+        //     let sheetTypes = [];
+        //     const firstDropdown = $('.sheet_type').first();
+        //     if (firstDropdown.length > 0) {
+        //         sheetTypes = firstDropdown.find('option').map(function () {
+        //             return $(this).val();
+        //         }).get().filter(v => v && v !== "");
+        //     } else {
+        //         // fallback (if no rows yet)
+        //         sheetTypes = $tempDropdown.find('option').map(function () {
+        //             return $(this).val();
+        //         }).get().filter(v => v && v !== "");
+        //     }
+
+        //     // 🔹 Step 2: Fetch tracking sheet headers via API
+        //     $.ajax({
+        //         url: baseurl + '/tracking-sheet/headers',
+        //         type: 'GET',
+        //         data: { project_id: projectId, cycle_id: cycleId },
+        //         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+        //         success: function (response) {
+        //             loader.hide();
+
+        //             if (!response || !response.headers || response.headers.length === 0) {
+        //                 Swal.fire({
+        //                     icon: 'info',
+        //                     title: 'No Headers Found',
+        //                     text: 'No tracking sheet headers are available for this project and cycle.'
+        //                 });
+        //                 return;
+        //             }
+
+        //             const headers = response.headers;
+
+        //             // 🔹 Step 3: Loop through each sheet type and header to create rows dynamically
+        //             sheetTypes.forEach(sheetType => {
+        //                 headers.forEach(header => {
+        //                     addReportRow(header, sheetType, header);
+        //                 });
+        //             });
+
+        //             Swal.fire({
+        //                 icon: 'success',
+        //                 title: 'Reports Generated',
+        //                 text: 'All rows have been created for each sheet type and tracking header.'
+        //             });
+        //         },
+        //         error: function (xhr, status, error) {
+        //             loader.hide();
+        //             console.error('Error fetching headers:', error);
+        //             Swal.fire({
+        //                 icon: 'error',
+        //                 title: 'Error',
+        //                 text: 'Failed to fetch tracking sheet headers!'
+        //             });
+        //         }
+        //     });
+        // });
+        // Handle Add Report button near report type
+        $(document).on('click', '#addReportBtnNearType', function () {
+            const projectId = $('#projectname').val();
+            const cycleId = $('#cyclename').val();
+
+            if (!projectId || !cycleId) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Missing Fields',
+                    text: 'Please select project and cycle first!'
+                });
+                return;
+            }
+
+            const loader = $("#loader");
+            loader.show();
+
+            // Remove any old rows
+            $('.report-row').remove();
+            reportCounter = 0;
+
+            // 🔹 Step 1: Get sheet type values dynamically from dropdown
+            let sheetTypes = [];
+            const firstDropdown = $('.sheet_type').first();
+            if (firstDropdown.length > 0) {
+                sheetTypes = firstDropdown.find('option').map(function () {
+                    return $(this).val();
+                }).get().filter(v => v && v !== "");
+            } else {
+                sheetTypes = [
+                    "sheet",
+                    "audit_sheet",
+                    "recheck_sheet",
+                    "audit_recheck_sheet",
+                    "user_work"
+                ];
+            }
+
+            // 🔹 Step 2: Fetch tracking headers for non-user_work types
+            $.ajax({
+                url: baseurl + '/tracking-sheet/headers',
+                type: 'GET',
+                data: { project_id: projectId, cycle_id: cycleId },
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                success: function (response) {
+
+                    $('.label-row').remove();
+                    $('.report-row').remove();
+                    
+                    loader.hide();
+
+                    const headers = (response && response.headers && response.headers.length > 0)
+                        ? response.headers
+                        : [];
+
+                    // Define user_work-specific options
+                    const userWorkOptions = [
+                        'picked_status', 'audit_status', 'recheck_status', 'audit_recheck_status',
+                        'recheck', 'picked_user_id', 'audit_user_id', 'recheck_user_id', 'recheck_audit_user_id',
+                        'open_time', 'close_time', 'audit_open_time', 'audit_close_time',
+                        'recheck_open_time', 'recheck_close_time',
+                        'audit_recheck_open_time', 'audit_recheck_close_time',
+                        'production_total_time', 'audit_total_time',
+                        'recheck_total_time', 'recheck_audit_total_time'
+                    ];
+
+                    // Helper to make labels readable (capitalize and replace underscores)
+                    function toReadableText(value) {
+                        return value
+                            .replace(/_/g, ' ')
+                            .replace(/\b\w/g, l => l.toUpperCase())
+                            .replace(/^Picked/i, "Production"); // fix for picked_ fields
+                    }
+
+                    // 🔹 Step 3: Loop over each sheet type
+                    sheetTypes.forEach(sheetType => {
+                        if (sheetType === "user_work") {
+                            // For user_work → use predefined options
+                            userWorkOptions.forEach(header => {
+                                const displayText = toReadableText(header);
+                                addReportRow(displayText, sheetType, header);
+                            });
+                        } else {
+                            // For all others → use tracking headers from API
+                            headers.forEach(header => {
+                                const displayText = toReadableText(header);
+                                addReportRow(displayText, sheetType, header);
+                            });
+                        }
+                    });
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Reports Generated',
+                        text: 'All rows have been created with readable names for each sheet type including User Work.'
+                    });
+                },
+                error: function (xhr, status, error) {
+                    loader.hide();
+                    console.error('Error fetching headers:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to fetch tracking sheet headers!'
+                    });
+                }
+            });
+        });
+
+
+
+
+        // Submit button (same as your existing code)
+        // $('#submitbtn').click(function (e) {
+        //     e.preventDefault();
+        //     const loader = document.getElementById("loader");
+
+        //     var projectId = $('#projectname').val();
+        //     var cycleId = $('#cyclename').val();
+        //     var reportType = $('#report_type').val();
+        //     loader.style.display = "inline-block";
+
+        //     if (!projectId || !cycleId || !reportType) {
+        //         alert("Please select project, cycle and enter report type");
+        //         return;
+        //     }
+
+        //     var reportObj = {}; // final report map
+        //     var index = 1; // counter for order
+
+        //     $('.report-row').each(function () {
+        //         var inputType = $(this).find('.input_type').val();
+        //         var sheetType = $(this).find('.sheet_type').val();
+        //         var trackingHeader = $(this).find('.tracking_sheet_headers').val();
+
+        //          if (inputType && sheetType && trackingHeader) {
+        //             // Add index as first element in the array
+        //             reportObj[inputType] = [index, sheetType, trackingHeader];
+        //             index++; // increment for next row
+        //         }
+        //     });
+
+        //     if ($.isEmptyObject(reportObj)) {
+        //         alert("Please add at least one report row with valid data");
+        //         loader.style.display = "none";
+        //         return;
+        //     }
+
+        //     console.log(reportObj, "reportObjjjj")
+        //     $.ajax({
+        //         url: baseurl + '/report_structure',
+        //         type: 'POST',
+        //         data: JSON.stringify({ project_id: parseInt(projectId), cycle_id: parseInt(cycleId), report: reportObj, report_type: reportType }),
+        //         contentType: 'application/json',
+        //         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+        //         success: function (response) {
+        //             console.log("Saved report:", response);
+        //             loader.style.display = "none";
+        //             Swal.fire({
+        //                 icon: 'success',
+        //                 title: 'Success',
+        //                 text: 'Report saved successfully!',
+        //                 confirmButtonColor: '#3085d6',
+        //                 confirmButtonText: 'OK'
+        //             }).then((result) => {
+        //                 if (result.isConfirmed) {
+        //                     location.reload();
+        //                 }
+        //             });
+        //         },
+        //         error: function (xhr, status, error) {
+        //             console.error("Error saving report:", error);
+        //             loader.style.display = "none";
+        //             Swal.fire({
+        //                 icon: 'error',
+        //                 title: 'Oops...',
+        //                 text: 'Something went wrong while saving the report!',
+        //                 confirmButtonColor: '#d33',
+        //                 confirmButtonText: 'Retry'
+        //             }).then((result) => {
+        //                 if (result.isConfirmed) {
+        //                     location.reload(); 
+        //                 }
+        //             });
+        //         }
+        //     });
+        // });
+        // When the tracker sheet header changes, copy it to the input box
+        $(document).on('change', '.tracking_sheet_headers', function () {
+            var selectedValue = $(this).val();
+            var $row = $(this).closest('.report-row');
+            $row.find('.input_type').val(selectedValue);
+        });
+
+        $('#submitbtn').click(function (e) {
+            e.preventDefault();
+            const loader = document.getElementById("loader");
+
+            var projectId = $('#projectname').val();
+            var cycleId = $('#cyclename').val();
+            var reportType = $('#report_type').val();
+            loader.style.display = "inline-block";
+
+            if (!projectId || !cycleId || !reportType) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Missing Fields',
+                    text: 'Please select project, cycle and enter report type!',
+                });
+                loader.style.display = "none";
+                return;
+            }
+
+            var reportObj = {};
+            var index = 1;
+            var inputTypes = [];
+
+            // collect input types
+            $('.report-row').each(function () {
+                var inputType = $(this).find('.input_type').val();
+                var sheetType = $(this).find('.sheet_type').val();
+                var trackingHeader = $(this).find('.tracking_sheet_headers').val();
+
+                if (inputType && sheetType && trackingHeader) {
+                    inputTypes.push(inputType);
+                }
+            });
+
+            // check duplicates
+            var duplicateCounts = {};
+            inputTypes.forEach(function (type) {
+                duplicateCounts[type] = (duplicateCounts[type] || 0) + 1;
+            });
+
+            // find which are duplicated
+            var duplicates = Object.keys(duplicateCounts).filter(type => duplicateCounts[type] > 1);
+
+            if (duplicates.length > 0) {
+                let dupMsg = duplicates.map(type => `${type} → ${duplicateCounts[type]} times`).join('\n');
+                loader.style.display = "none";
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Duplicate Input Types Found!',
+                    text: `The following input types are duplicated:\n${dupMsg}\n\nPlease remove duplicates before submitting.`,
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'OK'
+                });
+                return; // stop submission
+            }
+
+            // build report object if no duplicates
+            $('.report-row').each(function () {
+                var inputType = $(this).find('.input_type').val();
+                var sheetType = $(this).find('.sheet_type').val();
+                var trackingHeader = $(this).find('.tracking_sheet_headers').val();
+
+                if (inputType && sheetType && trackingHeader) {
+                    reportObj[inputType] = [index, sheetType, trackingHeader];
+                    index++;
+                }
+            });
+
+            if ($.isEmptyObject(reportObj)) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Empty Report',
+                    text: 'Please add at least one valid report row!',
+                });
+                loader.style.display = "none";
+                return;
+            }
+
+            console.log(reportObj, "reportObjjjj");
+
+            $.ajax({
+                url: baseurl + '/report_structure',
+                type: 'POST',
+                data: JSON.stringify({
+                    project_id: parseInt(projectId),
+                    cycle_id: parseInt(cycleId),
+                    report: reportObj,
+                    report_type: reportType
+                }),
+                contentType: 'application/json',
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                success: function (response) {
+                    loader.style.display = "none";
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Report saved successfully!',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                },
+                error: function (xhr, status, error) {
+                    loader.style.display = "none";
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong while saving the report!',
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'Retry'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                }
+            });
+        });
+
+        
+
+    });
+
+</script>   
+
+
+<script src="../../js/template.js"></script>
+
+</html>
+
+

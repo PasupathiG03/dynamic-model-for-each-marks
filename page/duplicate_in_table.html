@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MNW</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="../../vendors/feather/feather.css">
+    <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../../vendors/select2/select2.min.css">
+    <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" />
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="../../vendors/js/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <link rel="shortcut icon" href="../../images/logo/m-favicon.png" />
+    
+</head>
+
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <!-- <div id="navbarPlaceholder"></div> -->
+        <div id="navbar-container"></div>
+
+        
+
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_settings-panel.html -->
+            <!-- <div id="topbar"></div> -->
+            <div id="sidbar-container"></div>
+
+
+
+            <!-- partial -->
+            <!-- <div id="menubar"></div> -->
+            
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="text-primary">Duplicate Tabel</h3>
+                            <hr>
+                            <br>
+                            <div class="table-responsive">
+                                <table class="table table-bordered"
+                                    style="table-layout: auto; width: 100%; text-align: center;" id="my_table1">
+                                    <thead style="text-align: center;">
+                                        <tr>
+                                            <th>S.no</th>
+                                            <th>Project Name</th>
+                                            <th>Cycle Name </th>
+                                            <th>Original Image Path</th>
+                                            <th>Duplicate Project Name</th>
+                                            <th>Duplicate Cycle Name</th>
+                                            <th>Duplicate Image Path</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="newtable">
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                        <style>
+                            element.style {
+                                height: auto;
+                            }
+
+                            select[name="my_table_length"] {
+                                width: 20px;
+                                display: inline-block;
+                                height: 30px
+                            }
+
+                            #my_table1 {
+                                font-size: 16px;
+                            }
+
+                            #my_table1 th {
+                                font-size: 18px;
+                                text-align: center;
+                            }
+
+                            #my_table1 td {
+                                font-size: 15px;
+                            }
+                        </style>
+
+
+                    </div>
+                    <br>
+                </div>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+
+    <style>
+        select[name="my_table1_length"] {
+            height: 30px;
+        }
+
+        .paginate_button {
+            font-size: 12px;
+        }
+    </style>
+
+    <!-- container-scroller -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+    <script src="../../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+    <script src="../../vendors/datatables.net/jquery.dataTables.js"></script>
+    <script src="../../js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+   
+    <!-- <script src="../../vendors/select2/select2.min.js"></script> -->
+    <!-- <script src="../../js/off-canvas.js"></script> -->
+    <script src="../../js/hoverable-collapse.js"></script>
+    <script src="../../js/settings.js"></script>
+    <script src="../../js/todolist.js"></script>
+    <script src="../../js/select2.js"></script>
+</body>
+<script src="../../js/url.js"></script>
+<script src="../../js/auth-setup.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<!-- 
+<script>
+    $(document).ready(function () {
+        
+        var url = baseurl + '/getting_duplicates';
+        var autoIncrementId = 1;
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+
+                $('#newtable').empty()
+
+                $.each(response, function (index, item) {
+                    var rows = '';
+                    rows += '<tr>';
+                    rows += '<td>' + autoIncrementId++ + '</td>';
+                    rows += '<td>' + item['project_name'] + '</td>';
+                    rows += '<td>' + item['cycle_name'] + '</td>';
+
+                    // Remove "upload_image" from the original image path
+                    var originalImagePath = item['original_image_path'].replace('upload_image/', '');
+
+                    // Remove "upload_image" from the duplicate image path
+                    var duplicateImagePath = item['duplicate_image_path'].replace('upload_image/', '');
+
+                    // Wrap the <img> tags with <a> tags to open images in new tabs
+                    rows += '<td><a href="' + baseurl + '/image/' + originalImagePath + '" target="_blank"><img src="' + baseurl + '/image/' + originalImagePath + '" alt="Original Image"></a></td>';
+                    rows += '<td>' + item['dupli_project_name'] + '</td>';
+                    rows += '<td>' + item['dupli_cycle_name'] + '</td>';
+                    rows += '<td><a href="' + baseurl + '/image/' + duplicateImagePath + '" target="_blank"><img src="' + baseurl + '/image/' + duplicateImagePath + '" alt="Duplicate Image"></a></td>';
+                    rows += '</tr>';
+                    $('#newtable').append(rows);
+                });
+
+                $(document).ready(function () {
+                    $('#my_table1').dataTable({
+                        "pageLength": 10
+                    });
+                });
+            },
+
+
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script> -->
+
+<script>
+    $(document).ready(function () {
+       
+        loadNavbar();
+        loadsidbar();
+    });
+</script>
+<script>
+    $(document).ready(function () {
+
+        var url = baseurl + '/getting_duplicates';
+        var autoIncrementId = 1; // Initialize S.no counter
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+
+                $('#newtable').empty(); // Clear existing table rows
+
+                $.each(response, function (index, item) {
+                    // --- Start: Add the condition here ---
+                    // Check if Cycle Name and Duplicate Cycle Name are different
+                    if (item['cycle_name'] !== item['dupli_cycle_name']) {
+                        // --- If they are different, proceed to build and add the row ---
+
+                        var rows = '';
+                        rows += '<tr>';
+                        // Increment S.no only for rows that are actually added
+                        rows += '<td>' + autoIncrementId++ + '</td>';
+                        rows += '<td>' + item['project_name'] + '</td>';
+                        rows += '<td>' + item['cycle_name'] + '</td>';
+
+                        // Remove "upload_image/" from the paths
+                        var originalImagePath = item['original_image_path'].replace('upload_image/', '');
+                        var duplicateImagePath = item['duplicate_image_path'].replace('upload_image/', '');
+
+                        // Build image links
+                        rows += '<td><a href="' + baseurl + '/image/' + originalImagePath + '" target="_blank"><img src="' + baseurl + '/image/' + originalImagePath + '" alt="Original Image" style="max-width: 100px; height: auto;"></a></td>'; // Added basic styling for image size
+                        rows += '<td>' + item['dupli_project_name'] + '</td>';
+                        rows += '<td>' + item['dupli_cycle_name'] + '</td>';
+                        rows += '<td><a href="' + baseurl + '/image/' + duplicateImagePath + '" target="_blank"><img src="' + baseurl + '/image/' + duplicateImagePath + '" alt="Duplicate Image" style="max-width: 100px; height: auto;"></a></td>'; // Added basic styling for image size
+                        rows += '</tr>';
+
+                        $('#newtable').append(rows); // Append the row to the table
+
+                        // --- End: Row building and adding logic ---
+                    }
+                    // --- If cycle names are the same, the code inside the 'if' is skipped for this item ---
+                });
+
+                // Initialize DataTables *after* the loop has finished and the table is populated
+                // Check if DataTable instance already exists and destroy it first if needed
+                if ($.fn.DataTable.isDataTable('#my_table1')) {
+                    $('#my_table1').DataTable().destroy();
+                }
+                $('#my_table1').dataTable({
+                    "pageLength": 10
+                });
+            },
+
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+                // Optionally display an error message to the user
+                $('#newtable').append('<tr><td colspan="7">Error loading data. Please try again later.</td></tr>');
+            }
+        });
+    });
+</script>
+    <script src="../../js/template.js"></script>
+
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MNW</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="../../vendors/feather/feather.css">
+    <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  
+    <link rel="stylesheet" href="../../vendors/select2/select2.min.css">
+    <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" />
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="shortcut icon" href="../../images/logo/m-favicon.png" />
+    
+</head>
+
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <!-- <div id="navbarPlaceholder"></div> -->
+        <div id="navbar-container"></div>
+
+        
+
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_settings-panel.html -->
+            <!-- <div id="topbar"></div> -->
+            <div id="sidbar-container"></div>
+
+
+
+            <!-- partial -->
+            <!-- <div id="menubar"></div> -->
+            
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="text-primary">Re Allocation</h3>
+                            <hr>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label for="">Select Project</label>
+                                    <select class="form-control" name="selected_project" id="selected_project">
+                                        <option value="">--Select--</option>
+
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+
+                                    <label for="">Select Cycle</label>
+                                    <select class="form-control" name="selected_cycle" id="selected_cycle">
+                                        <option value="">--Select--</option>
+
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+
+                                    <label for="">Production Or Audit</label>
+                                    <select name="prod_or_audit" id="prod_or_audit" class="form-control">
+                                        <option value="">--Select--</option>
+                                        <option value="Production">Production</option>
+                                        <option value="Audit">Audit</option>
+                                        <option value="Recheck">Recheck</option>
+                                        <option value="Recheck audit">Recheck audit</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 mt-4">
+
+                                    <button class="btn btn-primary" onclick="getdata()">Get</button>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="my_table1">
+                                    <thead class="thead thead-light">
+                                        <tr>
+                                            <th>S.No</th>
+                                            <th style="display: none;">ID</th>
+                                            <th>Four digit store number</th>
+                                            <th>Store Name</th>
+                                            <th>Planogram Type</th>
+                                            <th>Planogram Name</th>
+                                            <!-- <th>Specialization</th> -->
+                                            <th>Picked By</th>
+                                            <th>
+                                                Action
+                                                <!-- <input class="form-check-input" type="checkbox" value="" id="selectAll1"> -->
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="tbody" id="newtable">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <br>
+
+                                <!-- <button class="btn btn-primary">Set User</button> -->
+                                <div class="row">
+                                    <div class="col-11 text-right">
+                                        <br>
+                                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                                            data-target="#exampleModal">
+                                            Set User
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Select User</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <label for="">Select User ID</label>
+                                                <select class="form-control" name="user_info" id="user_info">
+                                                    <option value="">--Select--</option>
+                                                </select>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary"
+                                                    onclick="reassigning_data()" data-dismiss="modal">Save
+                                                    changes</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <script src="../../vendors/js/vendor.bundle.base.js"></script>
+                        <style>
+                            element.style {
+                                height: auto;
+                            }
+
+                            select[name="my_table_length"] {
+                                width: 20px;
+                                display: inline-block;
+                                height: 30px
+                            }
+
+                            #my_table1 {
+                                font-size: 16px;
+                            }
+
+                            #my_table1 th {
+                                font-size: 18px;
+                                text-align: center;
+                            }
+
+                            #my_table1 td {
+                                font-size: 15px;
+                                text-align: center;
+                            }
+                            /* .assigncheckbox {
+                                margin-bottom: 50px;
+                            } */
+                        </style>
+                    </div>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        select[name="my_table1_length"] {
+            height: 30px;
+        }
+
+        .paginate_button {
+            font-size: 12px;
+        }
+    </style>
+
+    <!-- container-scroller -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script src="../../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+    <script src="../../vendors/datatables.net/jquery.dataTables.js"></script>
+    <script src="../../js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <!-- <script src="../../vendors/js/vendor.bundle.base.js"></script> -->
+    <!-- <script src="../../vendors/select2/select2.min.js"></script> -->
+    <!-- <script src="../../js/off-canvas.js"></script> -->
+    <script src="../../js/hoverable-collapse.js"></script>
+    <script src="../../js/settings.js"></script>
+    <script src="../../js/todolist.js"></script>
+    <script src="../../js/select2.js"></script>
+</body>
+<script src="../../js/url.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+<script>
+    $(document).ready(function () {
+       
+        loadNavbar();
+        loadsidbar();
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var url = baseurl + '/get_project';
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+                $.each(response, function (index, item) {
+                    var select = "";
+                    select += '<option value="' + item.project_id + '">' + item.project_name + '</option>';
+                    $('#selected_project').append(select);
+
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var url = baseurl + '/employee_list';
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+                $.each(response, function (index, item) {
+                    var select = "";
+                    select += '<option value="' + item.id + '">' + item.emp_id + '</option>';
+                    $('#user_info').append(select);
+
+                });
+                $('#user_info').select2({
+                    placeholder: "Select Option",
+                    allowClear: true,
+                    dropdownParent: $('#exampleModal') // 👈 add this line
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+<script>
+    $('#selected_project').change(function () {
+
+        var project_id = $('#selected_project').val()
+        var formData = new FormData();
+        formData.append('project_id', parseInt(project_id));
+        console.log(project_id)
+        var url = baseurl + '/get_cycle';
+        $('#selected_cycle').empty()
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                $.each(response, function (index, item) {
+                    
+                    var select = "";
+                    select += '<option value="' + item.cycle_id + '">' + item.cycle_name + '</option>'; // Access item properties correctly
+                    $('#selected_cycle').append(select);
+
+                });
+
+
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+<script>
+    function getdata() {
+
+        var project_id = $('#selected_project').val()
+        var cycle_id = $('#selected_cycle').val()
+        var prod_or_audit = $('#prod_or_audit').val()
+        var formData = new FormData();
+        formData.append('project_id', parseInt(project_id));
+        formData.append('cycle_id', parseInt(cycle_id));
+        formData.append('retrieve_type', prod_or_audit);
+        console.log(project_id)
+        var url = baseurl + '/retrieve_picked';
+        var autoIncrementId = 1;
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+                $('#newtable').empty();
+
+                $.each(response, function (index, item) {
+                    console.log(item.sheet['4 - Digit Store Number']);
+                    var rows = '';
+                    rows += '<tr>';
+                    rows += '<td>' + autoIncrementId++ + '</td>';
+                    rows += '<td style="display:none">' + item['id'] + '</td>';
+                    rows += '<td>' + item.sheet['4 - Digit Store Number'] + '</td>';
+                    rows += '<td>' + item.sheet['Store Name'] + '</td>';
+                    rows += '<td>' + item.sheet['Planogram Type'] + '</td>';
+                    rows += '<td>' + item.sheet['Planogram Name'] + '</td>';
+
+                    // rows += '<td>' + (item['_user_table1'] ? item['_user_table1']['specialization'] : '') + '</td>';
+                    rows += '<td>' + (item['emp_id']) + '</td>';
+
+                    rows += '<td><input class="form-check-input assigncheckbox" type="checkbox" id="checkbox' + autoIncrementId + '" style="position:relative;"></td>';
+                    rows += '</tr>';
+                    $('#newtable').append(rows);
+                });
+
+                // Initialize DataTable after populating the table
+                if (!$.fn.DataTable.isDataTable('#my_table1')) {
+                    $('#my_table1').dataTable({
+                        "pageLength": 5
+                    });
+                }
+            },
+
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+</script>
+
+<script>
+    function reassigning_data() {
+        var project_name = $('#selected_project').val();
+        var cycle_name = $('#selected_cycle').val();
+        var user_data = $('#user_info').val();
+        var prod_or_audit = $('#prod_or_audit').val();
+        var checkedItems = [];
+
+        $('#my_table1 tbody input:checked').each(function () {
+            checkedItems.push($(this).closest('tr').find('td:eq(1)').text());
+        });
+
+        // Convert array to comma-separated string
+        var checkedItemsString = checkedItems.join(',');
+        console.log(checkedItemsString)
+        console.log(user_data, prod_or_audit, checkedItemsString)
+        var url = baseurl + '/reallocation';
+        var user_data1;
+        if (user_data) {
+            user_data1 = user_data
+        }
+        else {
+            user_data1 = 0
+        }
+        //console.log(user_data1,"userdata")
+        var formData = new FormData();
+        formData.append('production_id', checkedItemsString);
+        formData.append('user_id', parseInt(user_data1));
+        formData.append('reallocate_type', prod_or_audit);
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error('Error updating user status:', error);
+                // Reset button text in case of error
+                button.textContent = currentText;
+            }
+        });
+    };
+
+</script>
+    <script src="../../js/template.js"></script>
+
+</html>

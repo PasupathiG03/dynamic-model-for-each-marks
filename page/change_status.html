@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MNW</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="../../vendors/feather/feather.css">
+    <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.css" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="../../vendors/select2/select2.min.css">
+    <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="../../vendors/js/vendor.bundle.base.js"></script>
+    <link rel="shortcut icon" href="../../images/logo/m-favicon.png" />
+     <style>
+        #loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0%   { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <!-- <div id="navbarPlaceholder"></div> -->
+        <div id="navbar-container"></div>
+        
+
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_settings-panel.html -->
+            <!-- <div id="topbar"></div> -->
+            <div id="sidbar-container"></div>
+
+
+            <!-- partial -->
+            <!-- <div id="menubar"></div> -->
+            
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <!-- <form> -->
+                                    <h3 class="text-primary">Check and Change Status</h3>
+                                    <hr>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-4">
+                                            <label for="">Project Name</label>
+                                            <select name="projectname" class="form-control" id="projectname" required>
+                                                <option value="">--Select Project--</option>
+                                            </select>
+                                            <!-- <div class="valid-feedback">Valid.</div>
+                                                <div class="invalid-feedback">Please fill out this field.</div> -->
+                                        </div>
+                                        <div class="col-sm-12 col-md-4">
+                                            <label for="">Cycle Name</label>
+                                            <select name="cyclename" class="form-control" id="cyclename" required>
+                                                <option value="">--Select Cycle--</option>
+                                            </select>
+                                            <!-- <div class="valid-feedback">Valid.</div>
+                                                <div class="invalid-feedback">Please fill out this field.</div> -->
+                                            <br>
+                                        </div>
+                                        <div class="col-sm-12 col-md-4">
+                                            <label>Status</label>
+                                            <select id="project_status" class="form-control">
+                                                <option value="">--Select Status--</option>
+                                                <option value="picked_status">Production</option>
+                                                <option value="audit_status">Audit</option>
+                                                <option value="recheck_status">Recheck Production</option>
+                                                <option value="audit_recheck_status">Recheck Audit</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="d-flex justify-content-end col-md-12 mt-2">
+                                            <button class="btn btn-primary btn-sm" id="submitbtn">Submit</button>
+                                            <br>
+                                        </div>
+                                    </div>
+                                    
+                                    <hr>
+                                    <div class="d-flex justify-content-center col-md-12 mt-3" id="skipped_count">
+                                        
+                                    </div>
+                                    <div class="d-flex justify-content-center col-md-12 mt-3" id="change_status_btn_container">
+                                        <!-- Button will be injected here if skipped count > 0 -->
+                                    </div>
+                                    <br>
+
+                              
+                                </div>
+                                <br><br>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br>
+                    <div id="loader" class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                   
+                    <br>
+                </div>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+
+    <style>
+        select[name="my_table1_length"] {
+            height: 30px;
+        }
+
+        .paginate_button {
+            font-size: 12px;
+        }
+    </style>
+    <!-- container-scroller -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Include Select2 CSS & JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+    <script src="../../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+    <script src="../../vendors/datatables.net/jquery.dataTables.js"></script>
+    <script src="../../js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+
+    <!-- <script src="../../vendors/select2/select2.min.js"></script> -->
+    <!-- <script src="../../js/off-canvas.js"></script> -->
+    <script src="../../js/hoverable-collapse.js"></script>
+    <script src="../../js/settings.js"></script>
+    <script src="../../js/todolist.js"></script>
+    <script src="../../js/select2.js"></script>
+</body>
+    <script src="../../js/url.js"></script>
+    <script src="../../js/auth-setup.js"></script>
+    <script>
+  
+
+    $(document).ready(function () {
+
+       
+        loadNavbar();
+        loadsidbar();
+
+    });
+
+    $(document).ready(function () {
+        var url = baseurl + '/get_project';
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                // Empty and add new options
+                $('#projectname').empty().append('<option value="">--Select Project--</option>');
+                $.each(response, function (index, item) {
+                    $('#projectname').append('<option value="' + item.project_id + '">' + item.project_name + '</option>');
+                });
+
+                // Activate Select2 (makes dropdown searchable)
+                $('#projectname').select2({
+                    placeholder: "Select Option",
+                    allowClear: true
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#projectname').change(function () {
+            var projectId = $(this).val();
+            populateCycleData(projectId);
+        });
+
+        function populateCycleData(projectId) {
+            var formData = new FormData();
+            formData.append('project_id', projectId);
+
+            var url = baseurl + '/get_cycle';
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                success: function (response) {
+                    console.log(response);
+                    $('#cyclename').empty(); // Clear existing options
+                    $('#cyclename').append('<option value="">--Select Cycle--</option>');
+                    $.each(response, function (index, item) {
+                        $('#cyclename').append('<option value="' + item.cycle_id + '">' + item.cycle_name + '</option>');
+                    });
+                    $('#cyclename').select2({
+                        placeholder: "Select Option",
+                        allowClear: true
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+        
+    });
+</script>
+<script>
+    document.getElementById("submitbtn").addEventListener("click", async function(e){
+        e.preventDefault();
+
+        const project_id = document.getElementById("projectname").value;
+        const cycle_id = document.getElementById("cyclename").value;
+        const status_field = document.getElementById("project_status").value;
+        let skip_url = `/get_skipped_count?project_id=${project_id}&cycle_id=${cycle_id}&status_field=${status_field}`;
+        console.log(skip_url, "================================================================")
+        console.log(status_field, "================================================================")
+
+        let status_url = `/change_skipped_to_open?project_id=${project_id}&cycle_id=${cycle_id}&status_field=${status_field}`;
+        var get_skipped_count_url = baseurl + skip_url;
+        console.log(get_skipped_count_url, "================================================================")
+
+        var change_skipped_to_open_url = baseurl + status_url;
+
+        if(!project_id || !cycle_id || !status_field) {
+            Swal.fire("Warning!", "Please select Project, Cycle, and Status.", "warning");
+            return;
+        }
+
+        const loader = document.getElementById("loader");
+        loader.style.display = "inline-block";
+
+        
+
+        try {
+            // const res = await fetch(get_skipped_count_url);
+            const res = await fetch(get_skipped_count_url, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+                });
+            if(!res.ok) throw new Error("Failed to fetch skipped count");
+            const data = await res.json();
+
+            loader.style.display = "none";
+
+            document.getElementById("skipped_count").innerHTML = `Skipped count: ${data.count}`;
+
+            const btnContainer = document.getElementById("change_status_btn_container");
+            btnContainer.innerHTML = "";
+
+            if(data.count > 0){
+                btnContainer.innerHTML = `<button class="btn btn-success btn-sm" id="changeStatusBtn">Change Skipped to Open</button>`;
+
+                document.getElementById("changeStatusBtn").addEventListener("click", async function(){
+                    loader.style.display = "inline-block";
+
+                    try {
+                        const resUpdate = await fetch(change_skipped_to_open_url, {
+                            method: "POST",
+                            // headers: {"Content-Type": "application/json"},
+                            headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                                'Content-Type': 'application/json'
+                                },
+                            body: JSON.stringify({project_id, cycle_id, status_field})
+                        });
+                        if(!resUpdate.ok) throw new Error("Failed to update skipped status");
+                        const updateData = await resUpdate.json();
+
+                        loader.style.display = "none";
+
+                        if(updateData.success){
+                            Swal.fire("Success!", updateData.message, "success");
+                            document.getElementById("skipped_count").innerHTML = "Skipped count: 0";
+                            btnContainer.innerHTML = "";
+                        }
+                    } catch(err) {
+                        loader.style.display = "none";
+                        Swal.fire("Error!", err.message, "error");
+                    }
+                });
+            }
+
+        } catch(err) {
+            loader.style.display = "none";
+            Swal.fire("Error!", err.message, "error");
+        }
+    });
+</script>
+    <script src="../../js/template.js"></script>
+
+</html>

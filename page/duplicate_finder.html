@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MNW</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="../../vendors/feather/feather.css">
+    <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../../vendors/select2/select2.min.css">
+    <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" />
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- endinject -->
+    <link rel="shortcut icon" href="../../images/logo/m-favicon.png" />
+    <link rel="stylesheet" href="../../js/multiselct/select1_13_18.css">
+
+
+</head>
+
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <!-- <div id="navbarPlaceholder"></div> -->
+        <div id="navbar-container"></div>
+
+
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_settings-panel.html -->
+            <!-- <div id="topbar"></div> -->
+            <div id="sidbar-container"></div>
+
+
+
+            <!-- partial -->
+            <!-- <div id="menubar"></div> -->
+
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="text-primary">Duplicate Finder</h3>
+                            <hr>
+                            <br>
+                            <div id="loader" class="spinner-border text-primary" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+
+                            <div id="selection-form">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <label>Project Name :</label>
+                                        <div class="project_list_item"></div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label>Find Duplicate Project Name :</label>
+                                        <div class="Duplicate_project_list_item"></div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label>Cycle Name :</label>
+                                        <div class="cycle_list_item"></div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label>Find Duplicate Cycle Name</label>
+                                        <div class="Duplicate_cycle_list_item"></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="mt-4 text-center">
+                                            <button type="button" id="submitBtn" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Consolidated Progress Display Section -->
+                            <div id="progress-container" class="mt-4" style="display: none;">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <h4 id="progress-title" class="mb-0">Processing</h4>
+                                    <span id="overall-status" class="font-weight-bold">Initializing...</span>
+                                </div>
+                                <div class="progress" style="height: 25px;">
+                                    <div id="overall-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%; font-size: 1rem;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                </div>
+                                <div id="current-task-details" class="text-muted small mt-1">Waiting to start...</div>
+                                <div id="final-message" class="mt-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        select[name="my_table1_length"] {
+            height: 30px;
+        }
+
+        .paginate_button {
+            font-size: 12px;
+        }
+    </style>
+    <style>
+        #loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+    </style>
+
+    <!-- container-scroller -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+    <script src="../../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+    <script src="../../vendors/datatables.net/jquery.dataTables.js"></script>
+    <script src="../../js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <script src="../../vendors/js/vendor.bundle.base.js"></script>
+    <!-- <script src="../../vendors/select2/select2.min.js"></script> -->
+    <!-- <script src="../../js/off-canvas.js"></script> -->
+    <script src="../../js/hoverable-collapse.js"></script>
+    <script src="../../js/settings.js"></script>
+    <script src="../../js/todolist.js"></script>
+    <script src="../../js/select2.js"></script>
+</body>
+<script src="../../js/url.js"></script>
+<script src="../../js/auth-setup.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+
+<script>
+    $(document).ready(function () {
+
+        loadNavbar();
+        loadsidbar();
+    });
+</script>
+<!-- 
+<script>
+    $(document).ready(function () {
+        var url = baseurl + '/dup';
+
+        // Show the loader before the AJAX request
+        $("#loader").show();
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            contentType: 'application/json',
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+
+                // Hide the loader
+                $("#loader").hide();
+
+                // Show the success message
+                $("#message").show().text('Request successful');
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+
+                // Hide the loader
+                $("#loader").hide();
+
+                // Show the error message
+                $("#message").show().text('Request failed').removeClass('alert-success').addClass('alert-danger');
+            }
+        });
+    });
+</script> -->
+
+<script src="../../js/url.js"></script>
+<script src="../../js/multiselct/popper.js"></script>
+<!-- Bootstrap-select JS -->
+<script src="../../js/multiselct/4select_1_13_18.js"></script>
+
+<script>
+    $(document).ready(function() {
+        const token = localStorage.getItem('token');
+        const RUNNING_JOB_KEY = 'duplicateFinderJob'; 
+        let pollingInterval;
+
+        function createSelect(id, title, disabled = false) {
+            return $('<select>').addClass('selectpicker form-control w-100').attr({ id, 'data-live-search': 'true', title }).prop('disabled', disabled).append($('<option>').val('').text(`-- ${title} --`));
+        }
+
+        // Fetches the list of projects
+        function fetchProjects() {
+            fetch(`${baseurl}/get_project`, { headers: { 'Authorization': `Bearer ${token}` } })
+            .then(response => response.json())
+            .then(projects => {
+                const $p1 = createSelect('projectSelect1', 'Select Project'), $p2 = createSelect('projectSelect2', 'Select Duplicate Project');
+                projects.forEach(p => { $p1.append($('<option>').val(p.project_id).text(p.project_name)); $p2.append($('<option>').val(p.project_id).text(p.project_name)); });
+                $('.project_list_item').html($p1).find('select').selectpicker('refresh');
+                $('.Duplicate_project_list_item').html($p2).find('select').selectpicker('refresh');
+            }).catch(e => console.error("Error fetching projects:", e));
+        }
+        
+        // Fetches cycles for a given project
+        function populateCycles(projectId, containerClass) {
+            const targetId = (containerClass === 'cycle_list_item') ? 'cycleSelect1' : 'cycleSelect2';
+            const $container = $(`.${containerClass}`);
+            if (!projectId) { $container.html(createSelect(targetId, 'Please select a project first', true)).find('select').selectpicker('refresh'); return; }
+            
+            const formData = new FormData();
+            formData.append('project_id', projectId);
+            fetch(`${baseurl}/get_cycle`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData })
+            .then(response => response.json())
+            .then(cycles => {
+                const $c = createSelect(targetId, 'Select Cycle', cycles.length === 0);
+                if (cycles.length > 0) cycles.forEach(c => $c.append($('<option>').val(c.cycle_id).text(c.cycle_name)));
+                else $c.append($('<option>').val('').text('No cycles available').prop('disabled', true));
+                $container.html($c).find('select').selectpicker('refresh');
+            }).catch(e => console.error("Error fetching cycles:", e));
+        }
+
+        // Event listeners for project selection
+        $(document).on('changed.bs.select', '#projectSelect1', () => populateCycles($('#projectSelect1').val(), 'cycle_list_item'));
+        $(document).on('changed.bs.select', '#projectSelect2', () => populateCycles($('#projectSelect2').val(), 'Duplicate_cycle_list_item'));
+        
+        // Submit button handler
+        $("#submitBtn").on("click", function() {
+            const p1 = $("#projectSelect1").val(), p2 = $("#projectSelect2").val(), c1 = $("#cycleSelect1").val(), c2 = $("#cycleSelect2").val();
+            if (!p1 || !p2 || !c1 || !c2) { Swal.fire("Validation Error", "Please select both projects and cycles.", "warning"); return; }
+            
+            setFormState(false);
+            
+            fetch(`${baseurl}/submit_cycles`, {
+                method: "POST", headers: { "Content-Type": "application/json", 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ project1_id: p1, project2_id: p2, cycle_1_id: c1, cycle_2_id: c2 }),
+            })
+            .then(res => res.json())
+            .then(data => { 
+                if (data.message) {
+                    const jobInfo = { p1, c1, p2, c2 };
+                    localStorage.setItem(RUNNING_JOB_KEY, JSON.stringify(jobInfo));
+
+                    pollingInterval = setInterval(() => pollProgress(p1, c1, p2, c2), 3000);
+                } else { 
+                    throw new Error("Failed to start job."); 
+                }
+            })
+            .catch(e => { console.error("Error submitting job:", e); setFormState(true); Swal.fire("Error", "Could not start the job.", "error"); });
+        });
+
+        // Polls for progress
+        function pollProgress(p1, c1, p2, c2) {
+            fetch(`${baseurl}/get_progress/${p1}/${c1}/${p2}/${c2}`, { headers: { 'Authorization': `Bearer ${token}` } })
+            .then(response => response.json())
+            .then(progressData => {
+                updateOverallProgressUI(progressData);
+                const completed = progressData.filter(p => p.status === 'completed' || p.status === 'failed').length;
+                if (progressData.length > 0 && completed === 4) {
+                    clearInterval(pollingInterval);
+                    setFormState(true, true); 
+
+                    localStorage.removeItem(RUNNING_JOB_KEY);
+                }
+            })
+            .catch(e => { 
+                console.error("Polling error:", e); 
+                clearInterval(pollingInterval); 
+                setFormState(true, false);
+                localStorage.removeItem(RUNNING_JOB_KEY); 
+            });
+        }
+        
+        // Updates the UI
+        function updateOverallProgressUI(progressData) {
+            // (Function is unchanged)
+            if ($("#loader").is(":visible") && progressData.length > 0) $("#loader").hide();
+            
+            let totalPercentage = 0, currentTaskText = "Initializing...", completedJobs = 0;
+            progressData.forEach(job => {
+                totalPercentage += job.percent * 0.25;
+                if (job.status === 'completed') completedJobs++;
+                if (job.status === 'started') currentTaskText = `Running: ${job.path}`;
+            });
+            
+            let overallStatusText = `Running`;
+            if (completedJobs === 4 || totalPercentage >= 100) {
+                totalPercentage = 100;
+                overallStatusText = "Completed";
+                currentTaskText = "All tasks finished.";
+            }
+            
+            const $progressBar = $("#overall-progress-bar");
+            $progressBar.css('width', `${totalPercentage}%`).text(`${totalPercentage.toFixed(1)}%`);
+            $("#overall-status").text(overallStatusText);
+            $("#current-task-details").text(currentTaskText);
+            
+            if (totalPercentage >= 100) $progressBar.removeClass('progress-bar-animated').addClass('bg-success');
+            else $progressBar.removeClass('bg-success').addClass('progress-bar-animated');
+        }
+
+        // Manages the form state
+        function setFormState(enabled, isComplete = false) {
+            $("#selection-form :input").prop('disabled', !enabled);
+            $('.selectpicker').selectpicker('refresh');
+
+            if (enabled) {
+                if (isComplete) {
+                    $("#final-message").html('<div class="alert alert-success mt-3">All jobs completed successfully!</div>');
+                } else {
+                    $("#final-message").html('<div class="alert alert-danger mt-3">An error occurred.</div>');
+                }
+            } else {
+                $("#loader").show();
+                $("#progress-container").fadeIn();
+                $("#final-message").empty();
+                updateOverallProgressUI([]);
+            }
+        }
+        
+        // Function to check for a running job on page load ***
+        function checkForRunningJob() {
+            const jobInfoJSON = localStorage.getItem(RUNNING_JOB_KEY);
+            if (jobInfoJSON) {
+                const jobInfo = JSON.parse(jobInfoJSON);
+                const { p1, c1, p2, c2 } = jobInfo;
+
+                // A job was running. Disable form and start polling immediately.
+                setFormState(false); 
+                pollProgress(p1, c1, p2, c2); 
+                pollingInterval = setInterval(() => pollProgress(p1, c1, p2, c2), 3000);
+            }
+        }
+
+        // --- Initial Page Load ---
+        fetchProjects();
+        $('.cycle_list_item').html(createSelect('cycleSelect1', 'Please select a project first', true)).find('select').selectpicker('refresh');
+        $('.Duplicate_cycle_list_item').html(createSelect('cycleSelect2', 'Please select a project first', true)).find('select').selectpicker('refresh');
+        
+        checkForRunningJob(); 
+    });
+</script>
+
+<script src="../../js/template.js"></script>
+
+</html>

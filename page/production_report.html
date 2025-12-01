@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MNW</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="../../vendors/feather/feather.css">
+    <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../../vendors/select2/select2.min.css">
+    <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" />
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- endinject -->
+    <link rel="shortcut icon" href="../../images/logo/m-favicon.png" />
+    
+</head>
+
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <!-- <div id="navbarPlaceholder"></div> -->
+        <div id="navbar-container"></div>
+        
+
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_settings-panel.html -->
+            <!-- <div id="topbar"></div> -->
+            <div id="sidbar-container"></div>
+            
+
+            <!-- partial -->
+            <!-- <div id="menubar"></div> -->
+            
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="text-primary">Production Report</h3>
+                            <hr>
+                            <br>
+
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label for="">Select Project</label>
+                                    <select class="form-control" name="selected_project" id="selected_project">
+                                        <option value="">--Select--</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+
+                                    <label for="">Select Cycle</label>
+                                    <select class="form-control" name="selected_cycle" id="selected_cycle">
+                                        <option value="">--Select--</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+
+                                    <label for="">From Date</label>
+                                    <input type="date" class="form-control" name="from_date" id="from_date">
+                                </div>
+                                <div class="col-md-2">
+
+                                    <label for="">To Date</label>
+                                    <input type="date" class="form-control" name="to_date" id="to_date">
+
+                                </div>
+                                <div class="col-md-2 mt-4">
+
+                                    <button class="btn btn-primary" id="downloadButton">Download Tracker Sheet</button>
+
+                                </div>
+                                <div class="col-md-2 mt-4">
+
+                                    <button class="btn btn-primary " id="downloadzip">Download ZIP</button>
+                                    
+                                </div>
+                            </div>
+                            <style>
+                                /* Simple loader style */
+                                #loader {
+                                    display: none;
+                                    border: 16px solid #f3f3f3;
+                                    border-radius: 50%;
+                                    border-top: 16px solid #3498db;
+                                    width: 120px;
+                                    height: 120px;
+                                    animation: spin 2s linear infinite;
+                                    position: fixed;
+                                    left: 50%;
+                                    top: 50%;
+                                    transform: translate(-50%, -50%);
+                                }
+                        
+                                @keyframes spin {
+                                    0% { transform: rotate(0deg); }
+                                    100% { transform: rotate(360deg); }
+                                }
+                            </style>
+                             <div id="loader"></div>
+
+                        </div>
+                        <script src="../../vendors/js/vendor.bundle.base.js"></script>
+                        <style>
+                            element.style {
+                                height: auto;
+                            }
+
+                            select[name="my_table_length"] {
+                                width: 20px;
+                                display: inline-block;
+                                height: 30px
+                            }
+
+                            #my_table1 {
+                                font-size: 16px;
+                            }
+
+                            #my_table1 th {
+                                font-size: 18px;
+                                text-align: center;
+                            }
+
+                            #my_table1 td {
+                                font-size: 15px;
+                            }
+                        </style>
+
+
+                    </div>
+                    <br>
+                </div>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+
+    <style>
+        select[name="my_table1_length"] {
+            height: 30px;
+        }
+
+        .paginate_button {
+            font-size: 12px;
+        }
+    </style>
+
+    <!-- container-scroller -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+    <script src="../../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+    <script src="../../vendors/datatables.net/jquery.dataTables.js"></script>
+    <script src="../../js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <!-- <script src="../../vendors/js/vendor.bundle.base.js"></script> -->
+    <!-- <script src="../../vendors/select2/select2.min.js"></script> -->
+    <!-- <script src="../../js/off-canvas.js"></script> -->
+    <script src="../../js/hoverable-collapse.js"></script>
+    <script src="../../js/settings.js"></script>
+    <script src="../../js/todolist.js"></script>
+    <script src="../../js/select2.js"></script>
+</body>
+<script src="../../js/url.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+
+<script>
+    $(document).ready(function () {
+       
+        loadNavbar();
+        loadsidbar();
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var url = baseurl + '/get_project';
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+                $.each(response, function (index, item) {
+                    var select = ""; // Initialize select variable
+                    select += '<option value="' + item.project_id + '">' + item.project_name + '</option>'; // Access item properties correctly
+                    $('#selected_project').append(select);
+
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+
+<script>
+    $('#selected_project').change(function () {
+
+        var project_id = $('#selected_project').val()
+        var formData = new FormData();
+        formData.append('project_id', parseInt(project_id));
+        console.log(project_id)
+        var url = baseurl + '/get_cycle';
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            success: function (response) {
+                $.each(response, function (index, item) {
+                    var select = ""; // Initialize select variable
+                    select += '<option value="' + item.cycle_id + '">' + item.cycle_name + '</option>'; // Access item properties correctly
+                    $('#selected_cycle').append(select);
+
+                });
+
+
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#downloadButton').click(function () {
+
+            var project_id = $('#selected_project').val()
+            var cycle_id = $('#selected_cycle').val()
+            var from_date = $('#from_date').val()
+            var to_date = $('#to_date').val()
+
+            console.log(from_date, to_date)
+            var formData = new FormData();
+            formData.append('Project_id', parseInt(project_id));
+            formData.append('Cycle_id', parseInt(cycle_id));
+            formData.append('from_date', from_date);
+            formData.append('to_date', to_date);
+            console.log(project_id)
+
+                        
+            if (!project_id || !cycle_id || !from_date || !to_date) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Warning',
+                    text: 'Please fill all the fields!',
+                });
+                return;
+            }
+
+
+            var url = baseurl + '/production_report';
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                success: function (response) {
+
+                    var blob = new Blob([response], { type: 'text/csv' });
+                    var link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'production_data.csv';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#downloadzip').click(function () {
+
+            var project_id = $('#selected_project').val();
+            var cycle_id = $('#selected_cycle').val();
+            var from_date = $('#from_date').val();
+            var to_date = $('#to_date').val();
+
+            console.log(from_date, to_date);
+            var formData = new FormData();
+            formData.append('Project_id', parseInt(project_id));
+            formData.append('Cycle_id', parseInt(cycle_id));
+            formData.append('from_date', from_date);
+            formData.append('to_date', to_date);
+            console.log(project_id);
+
+                        
+            if (!project_id) {
+                Swal.fire("Missing Field", "Please select a Project.", "warning");
+                return;
+            }
+            if (!cycle_id) {
+                Swal.fire("Missing Field", "Please select a cycle.", "warning");
+                return;
+            }
+            if (!from_date) {
+                Swal.fire("Missing Field", "Please select a from date.", "warning");
+                return;
+            }
+            if (!to_date) {
+                Swal.fire("Missing Field", "Please select a to date.", "warning");
+                return;
+            }
+
+
+            var url = baseurl + '/production_report_zip_file';
+
+            // Show loader
+            $('#loader').show();
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                success: function (response) {
+                    // Hide loader
+                    $('#loader').hide();
+
+                    var blob = new Blob([response], { type: 'application/zip' });
+                    var link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'production_data.zip';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                },
+                error: function (xhr, status, error) {
+                    // Hide loader
+                    $('#loader').hide();
+
+                    console.error('Error:', error);
+                }
+            });
+
+        });
+    });
+</script>
+    <script src="../../js/template.js"></script>
+
+</html>
